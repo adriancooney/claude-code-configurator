@@ -114,8 +114,8 @@ export const TOOL_PACKS: ToolPack[] = [
 			"Bash(pnpm test:*)",
 			"Bash(pnpm build:*)",
 			"Bash(pnpm exec:*)",
-			"Bash(pnpm create:*)",
 			"Bash(pnpm dlx:*)",
+			"Bash(pnpm create:*)",
 			// yarn
 			"Bash(yarn install:*)",
 			"Bash(yarn add:*)",
