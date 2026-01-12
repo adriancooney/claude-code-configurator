@@ -266,6 +266,8 @@ export const TOOL_PACKS: ToolPack[] = [
 		read: [
 			"Bash(next info:*)",
 			"Bash(next lint:*)",
+			"mcp__next-devtools__nextjs_index",
+			"mcp__next-devtools__nextjs_call",
 		],
 		write: [
 			"Bash(next dev:*)",

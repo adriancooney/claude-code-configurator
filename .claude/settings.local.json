@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:code.claude.com)",
+      "WebSearch",
+      "WebFetch(domain:json.schemastore.org)",
+      "WebFetch(domain:www.schemastore.org)",
+      "WebFetch(domain:github.com)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm build:*)",
+      "mcp__next-devtools__nextjs_index",
+      "mcp__next-devtools__nextjs_call",
+      "WebFetch(domain:graphite.dev)",
+      "WebFetch(domain:graphite.com)",
+      "Bash(git add:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit:*)",
+      "WebFetch(domain:www.radix-ui.com)",
+      "Bash(cat:*)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "next-devtools"
+  ]
+}
