@@ -1,19 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Box, Button, Flex, Text } from "@radix-ui/themes";
-import { CheckCircledIcon, CopyIcon, CrossCircledIcon, DownloadIcon } from "@radix-ui/react-icons";
+import { AlertDialog, Box, Button, Flex, Text } from "@radix-ui/themes";
+import { CheckCircledIcon, ClipboardIcon, CopyIcon, CrossCircledIcon, DownloadIcon } from "@radix-ui/react-icons";
 import type { ClaudeCodeSettings } from "../lib/schema";
 import { validateSettings, type ValidationResult } from "../lib/validate";
 
 interface JsonPreviewProps {
 	settings: ClaudeCodeSettings;
+	onSettingsChange: (settings: ClaudeCodeSettings) => void;
 }
 
-export function JsonPreview({ settings }: JsonPreviewProps) {
+export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 	const json = JSON.stringify(settings, null, 2);
 	const [validation, setValidation] = useState<ValidationResult | null>(null);
 	const [isValidating, setIsValidating] = useState(false);
+	const [pasteDialogOpen, setPasteDialogOpen] = useState(false);
+	const [clipboardContent, setClipboardContent] = useState("");
 
 	useEffect(() => {
 		let cancelled = false;
@@ -45,6 +48,26 @@ export function JsonPreview({ settings }: JsonPreviewProps) {
 		URL.revokeObjectURL(url);
 	};
 
+	const handlePaste = async () => {
+		try {
+			const text = await navigator.clipboard.readText();
+			setClipboardContent(text);
+			setPasteDialogOpen(true);
+		} catch {
+			alert("Unable to read clipboard. Please check browser permissions.");
+		}
+	};
+
+	const confirmPaste = () => {
+		try {
+			const parsed = JSON.parse(clipboardContent);
+			onSettingsChange(parsed);
+			setPasteDialogOpen(false);
+		} catch {
+			alert("Invalid JSON in clipboard.");
+		}
+	};
+
 	return (
 		<Flex direction="column" gap="3" style={{ height: "100%" }}>
 			<Flex justify="between" align="center">
@@ -64,6 +87,10 @@ export function JsonPreview({ settings }: JsonPreviewProps) {
 					<Button size="1" variant="soft" onClick={handleCopy}>
 						<CopyIcon />
 						Copy
+					</Button>
+					<Button size="1" variant="soft" onClick={handlePaste}>
+						<ClipboardIcon />
+						Paste
 					</Button>
 					<Button size="1" variant="soft" onClick={handleDownload}>
 						<DownloadIcon />
@@ -112,6 +139,42 @@ export function JsonPreview({ settings }: JsonPreviewProps) {
 			>
 				{json}
 			</Box>
+
+			<AlertDialog.Root open={pasteDialogOpen} onOpenChange={setPasteDialogOpen}>
+				<AlertDialog.Content maxWidth="500px">
+					<AlertDialog.Title>Replace Settings</AlertDialog.Title>
+					<AlertDialog.Description size="2">
+						This will replace your current settings with the contents of your clipboard. This action cannot be undone.
+					</AlertDialog.Description>
+					<Box
+						mt="3"
+						style={{
+							maxHeight: "200px",
+							overflow: "auto",
+							background: "var(--gray-2)",
+							borderRadius: "var(--radius-2)",
+							padding: "var(--space-2)",
+							fontFamily: "monospace",
+							fontSize: "12px",
+							whiteSpace: "pre",
+						}}
+					>
+						{clipboardContent}
+					</Box>
+					<Flex gap="3" mt="4" justify="end">
+						<AlertDialog.Cancel>
+							<Button variant="soft" color="gray">
+								Cancel
+							</Button>
+						</AlertDialog.Cancel>
+						<AlertDialog.Action>
+							<Button variant="solid" color="red" onClick={confirmPaste}>
+								Replace Settings
+							</Button>
+						</AlertDialog.Action>
+					</Flex>
+				</AlertDialog.Content>
+			</AlertDialog.Root>
 		</Flex>
 	);
 }

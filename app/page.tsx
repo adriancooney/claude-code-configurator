@@ -309,7 +309,7 @@ export default function Home() {
 						overflow: "auto",
 					}}
 				>
-					<JsonPreview settings={cleanSettings(settings)} />
+					<JsonPreview settings={cleanSettings(settings)} onSettingsChange={setSettings} />
 				</Box>
 			</Flex>
 
