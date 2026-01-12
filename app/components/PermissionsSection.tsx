@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex, Select, Text } from "@radix-ui/themes";
+import { Box, Flex, Link, Select, Text } from "@radix-ui/themes";
 import type { Permissions, PermissionMode } from "../lib/schema";
 import { PERMISSION_MODES } from "../lib/schema";
 import { getPackRules } from "../lib/packs";
@@ -26,7 +26,10 @@ export function PermissionsSection({ permissions, onChange }: PermissionsSection
 	return (
 		<Flex direction="column" gap="5">
 			<Text size="2" color="gray">
-				Control which actions Claude can perform automatically, which require confirmation, and which are blocked entirely.
+				Control which actions Claude can perform automatically, which require confirmation, and which are blocked entirely.{" "}
+				<Link href="https://docs.anthropic.com/en/docs/claude-code/settings#permissions" target="_blank" rel="noopener noreferrer">
+					Learn more
+				</Link>
 			</Text>
 
 			<Box>

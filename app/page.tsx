@@ -20,6 +20,11 @@ import {
 	PermissionsSection,
 	SandboxSection,
 	GeneralSection,
+	McpServersSection,
+	HooksSection,
+	EnvironmentSection,
+	PluginsSection,
+	AdvancedSection,
 } from "./components";
 import { DEFAULT_SETTINGS, type ClaudeCodeSettings } from "./lib/schema";
 
@@ -92,6 +97,7 @@ export default function Home() {
 	const cleanSettings = (s: ClaudeCodeSettings): ClaudeCodeSettings => {
 		const clean: ClaudeCodeSettings = { $schema: s.$schema };
 
+		// Permissions
 		if (s.permissions) {
 			const p: typeof s.permissions = {};
 			if (s.permissions.defaultMode && s.permissions.defaultMode !== "default") {
@@ -103,6 +109,7 @@ export default function Home() {
 			if (Object.keys(p).length) clean.permissions = p;
 		}
 
+		// Sandbox
 		if (s.sandbox) {
 			const sb: typeof s.sandbox = {};
 			if (s.sandbox.enabled) sb.enabled = s.sandbox.enabled;
@@ -111,12 +118,40 @@ export default function Home() {
 			if (Object.keys(sb).length) clean.sandbox = sb;
 		}
 
+		// General
 		if (s.model) clean.model = s.model;
 		if (s.cleanupPeriodDays !== undefined) clean.cleanupPeriodDays = s.cleanupPeriodDays;
 		if (s.includeCoAuthoredBy === false) clean.includeCoAuthoredBy = s.includeCoAuthoredBy;
 		if (s.spinnerTipsEnabled === false) clean.spinnerTipsEnabled = s.spinnerTipsEnabled;
 		if (s.alwaysThinkingEnabled) clean.alwaysThinkingEnabled = s.alwaysThinkingEnabled;
 		if (s.skipWebFetchPreflight) clean.skipWebFetchPreflight = s.skipWebFetchPreflight;
+
+		// MCP Servers
+		if (s.enableAllProjectMcpServers) clean.enableAllProjectMcpServers = s.enableAllProjectMcpServers;
+		if (s.enabledMcpjsonServers?.length) clean.enabledMcpjsonServers = s.enabledMcpjsonServers;
+		if (s.disabledMcpjsonServers?.length) clean.disabledMcpjsonServers = s.disabledMcpjsonServers;
+
+		// Hooks
+		if (s.disableAllHooks) clean.disableAllHooks = s.disableAllHooks;
+		if (s.hooks && Object.keys(s.hooks).length) clean.hooks = s.hooks;
+
+		// Environment
+		if (s.env && Object.keys(s.env).length) clean.env = s.env;
+		if (s.outputStyle) clean.outputStyle = s.outputStyle;
+
+		// Plugins
+		if (s.enabledPlugins && Object.keys(s.enabledPlugins).length) clean.enabledPlugins = s.enabledPlugins;
+		if (s.skippedMarketplaces?.length) clean.skippedMarketplaces = s.skippedMarketplaces;
+		if (s.skippedPlugins?.length) clean.skippedPlugins = s.skippedPlugins;
+
+		// Advanced
+		if (s.apiKeyHelper) clean.apiKeyHelper = s.apiKeyHelper;
+		if (s.awsCredentialExport) clean.awsCredentialExport = s.awsCredentialExport;
+		if (s.awsAuthRefresh) clean.awsAuthRefresh = s.awsAuthRefresh;
+		if (s.otelHeadersHelper) clean.otelHeadersHelper = s.otelHeadersHelper;
+		if (s.forceLoginMethod) clean.forceLoginMethod = s.forceLoginMethod;
+		if (s.forceLoginOrgUUID) clean.forceLoginOrgUUID = s.forceLoginOrgUUID;
+		if (s.statusLine) clean.statusLine = s.statusLine;
 
 		return clean;
 	};
@@ -133,7 +168,7 @@ export default function Home() {
 			>
 				<Flex justify="between" align="center">
 					<Box>
-						<Heading size="6">Claude Code Permissions Configurator</Heading>
+						<Heading size="6">Claude Code Configurator</Heading>
 						<Text size="2" color="gray">
 							Visual configuration tool for{" "}
 							<Link href="https://docs.anthropic.com/en/docs/claude-code/settings" target="_blank" rel="noopener noreferrer">
@@ -173,6 +208,15 @@ export default function Home() {
 						<Flex direction="column" gap="5">
 							<Section size="1">
 								<Heading size="3" mb="3">
+									General Settings
+								</Heading>
+								<GeneralSection settings={settings} onChange={setSettings} />
+							</Section>
+
+							<Separator size="4" />
+
+							<Section size="1">
+								<Heading size="3" mb="3">
 									Permissions
 								</Heading>
 								<PermissionsSection
@@ -197,9 +241,42 @@ export default function Home() {
 
 							<Section size="1">
 								<Heading size="3" mb="3">
-									General Settings
+									MCP Servers
 								</Heading>
-								<GeneralSection settings={settings} onChange={setSettings} />
+								<McpServersSection settings={settings} onChange={setSettings} />
+							</Section>
+
+							<Separator size="4" />
+
+							<Section size="1">
+								<Heading size="3" mb="3">
+									Hooks
+								</Heading>
+								<HooksSection settings={settings} onChange={setSettings} />
+							</Section>
+
+							<Separator size="4" />
+
+							<Section size="1">
+								<Heading size="3" mb="3">
+									Environment
+								</Heading>
+								<EnvironmentSection settings={settings} onChange={setSettings} />
+							</Section>
+
+							<Separator size="4" />
+
+							<Section size="1">
+								<Heading size="3" mb="3">
+									Plugins
+								</Heading>
+								<PluginsSection settings={settings} onChange={setSettings} />
+							</Section>
+
+							<Separator size="4" />
+
+							<Section size="1">
+								<AdvancedSection settings={settings} onChange={setSettings} />
 							</Section>
 
 							<Box py="4">
@@ -211,6 +288,11 @@ export default function Home() {
 									{" "}&bull;{" "}
 									<Link href="https://github.com/adriancooney/claude-permissions-configurator" target="_blank" rel="noopener noreferrer">
 										View source on GitHub
+									</Link>
+									{" "}&bull;{" "}
+									Deployed on{" "}
+									<Link href="https://vercel.com" target="_blank" rel="noopener noreferrer">
+										Vercel
 									</Link>
 								</Text>
 							</Box>

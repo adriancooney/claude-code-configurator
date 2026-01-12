@@ -1,13 +1,23 @@
 "use client";
 
-import { Box, Button, Flex, Select, Switch, Text, TextField } from "@radix-ui/themes";
+import { Box, Flex, Link, Select, Switch, Text, TextField } from "@radix-ui/themes";
 import { useState } from "react";
 import type { ClaudeCodeSettings } from "../lib/schema";
 
 const MODELS = [
-	{ value: "__default__", label: "Default (no override)" },
-	{ value: "claude-sonnet-4-20250514", label: "Claude Sonnet 4" },
-	{ value: "claude-opus-4-20250514", label: "Claude Opus 4" },
+	{ value: "__default__", label: "Default (no override)", token: null },
+	{ value: "claude-sonnet-4-20250514", label: "Claude Sonnet 4", token: "claude-sonnet-4-20250514" },
+	{ value: "claude-opus-4-20250514", label: "Claude Opus 4", token: "claude-opus-4-20250514" },
+	{ value: "claude-sonnet-4-5-20250514", label: "Claude Sonnet 4.5", token: "claude-sonnet-4-5-20250514" },
+	{ value: "claude-opus-4-5-20250514", label: "Claude Opus 4.5", token: "claude-opus-4-5-20250514" },
+	{ value: "claude-haiku-4-5-20250514", label: "Claude Haiku 4.5", token: "claude-haiku-4-5-20250514" },
+	{ value: "custom", label: "Custom...", token: null },
+];
+
+const OUTPUT_STYLES = [
+	{ value: "__default__", label: "Default", description: "Concise, direct responses" },
+	{ value: "explanatory", label: "Explanatory", description: "More detailed with context" },
+	{ value: "learning", label: "Learning", description: "Educational explanations" },
 	{ value: "custom", label: "Custom..." },
 ];
 
@@ -19,18 +29,32 @@ interface GeneralSectionProps {
 export function GeneralSection({ settings, onChange }: GeneralSectionProps) {
 	const currentModel = settings.model || "";
 	const isCustomModel = currentModel && !MODELS.some((m) => m.value === currentModel && m.value !== "custom");
-	const [showCustomInput, setShowCustomInput] = useState(isCustomModel);
+	const [showCustomModelInput, setShowCustomModelInput] = useState(isCustomModel);
+
+	const currentOutputStyle = settings.outputStyle || "";
+	const isCustomOutputStyle = currentOutputStyle && !OUTPUT_STYLES.some((s) => s.value === currentOutputStyle && s.value !== "custom");
+	const [showCustomOutputStyleInput, setShowCustomOutputStyleInput] = useState(isCustomOutputStyle);
 
 	const handleModelChange = (value: string) => {
 		if (value === "custom") {
-			setShowCustomInput(true);
+			setShowCustomModelInput(true);
 		} else {
-			setShowCustomInput(false);
+			setShowCustomModelInput(false);
 			onChange({ ...settings, model: value === "__default__" ? undefined : value });
 		}
 	};
 
-	const selectValue = showCustomInput ? "custom" : (currentModel || "__default__");
+	const handleOutputStyleChange = (value: string) => {
+		if (value === "custom") {
+			setShowCustomOutputStyleInput(true);
+		} else {
+			setShowCustomOutputStyleInput(false);
+			onChange({ ...settings, outputStyle: value === "__default__" ? undefined : value });
+		}
+	};
+
+	const modelSelectValue = showCustomModelInput ? "custom" : (currentModel || "__default__");
+	const outputStyleSelectValue = showCustomOutputStyleInput ? "custom" : (currentOutputStyle || "__default__");
 
 	return (
 		<Flex direction="column" gap="5">
@@ -39,17 +63,18 @@ export function GeneralSection({ settings, onChange }: GeneralSectionProps) {
 					Model Override
 				</Text>
 				<Flex direction="column" gap="2">
-					<Select.Root value={selectValue} onValueChange={handleModelChange}>
+					<Select.Root value={modelSelectValue} onValueChange={handleModelChange}>
 						<Select.Trigger style={{ width: "100%" }} />
 						<Select.Content>
 							{MODELS.map((model) => (
 								<Select.Item key={model.value} value={model.value}>
 									{model.label}
+									{model.token && <code style={{ opacity: 0.7, marginLeft: 8 }}>{model.token}</code>}
 								</Select.Item>
 							))}
 						</Select.Content>
 					</Select.Root>
-					{showCustomInput && (
+					{showCustomModelInput && (
 						<TextField.Root
 							placeholder="e.g., claude-sonnet-4-20250514"
 							value={settings.model || ""}
@@ -60,27 +85,10 @@ export function GeneralSection({ settings, onChange }: GeneralSectionProps) {
 					)}
 				</Flex>
 				<Text size="1" color="gray" mt="1">
-					Override the default AI model used by Claude Code
-				</Text>
-			</Box>
-
-			<Box>
-				<Text as="label" size="2" weight="medium" mb="1" style={{ display: "block" }}>
-					Cleanup Period (days)
-				</Text>
-				<TextField.Root
-					type="number"
-					placeholder="30"
-					value={settings.cleanupPeriodDays?.toString() || ""}
-					onChange={(e) =>
-						onChange({
-							...settings,
-							cleanupPeriodDays: e.target.value ? Number.parseInt(e.target.value) : undefined,
-						})
-					}
-				/>
-				<Text size="1" color="gray" mt="1">
-					Days to retain chat transcripts
+					Override the default AI model used by Claude Code.{" "}
+					<Link href="https://platform.claude.com/docs/en/about-claude/models/overview" target="_blank" rel="noopener noreferrer">
+						View available models
+					</Link>
 				</Text>
 			</Box>
 
@@ -135,22 +143,65 @@ export function GeneralSection({ settings, onChange }: GeneralSectionProps) {
 				/>
 			</Flex>
 
-			<Flex justify="between" align="center">
-				<Flex direction="column" gap="1">
-					<Text size="2" weight="medium">
-						Skip WebFetch Preflight
-					</Text>
-					<Text size="1" color="gray">
-						Skip the HEAD request check before fetching URLs
-					</Text>
+			<Box>
+				<Text as="label" size="2" weight="medium" mb="1" style={{ display: "block" }}>
+					Output Style
+				</Text>
+				<Flex direction="column" gap="2">
+					<Select.Root value={outputStyleSelectValue} onValueChange={handleOutputStyleChange}>
+						<Select.Trigger style={{ width: "100%" }} />
+						<Select.Content>
+							{OUTPUT_STYLES.map((style) => (
+								<Select.Item key={style.value} value={style.value}>
+									{style.label}
+									{style.description && <span style={{ opacity: 0.7, marginLeft: 8 }}>— {style.description}</span>}
+								</Select.Item>
+							))}
+						</Select.Content>
+					</Select.Root>
+					{showCustomOutputStyleInput && (
+						<TextField.Root
+							placeholder="Enter custom output style..."
+							value={settings.outputStyle || ""}
+							onChange={(e) =>
+								onChange({ ...settings, outputStyle: e.target.value || undefined })
+							}
+						/>
+					)}
 				</Flex>
-				<Switch
-					checked={settings.skipWebFetchPreflight ?? false}
-					onCheckedChange={(skipWebFetchPreflight) =>
-						onChange({ ...settings, skipWebFetchPreflight })
+				<Text size="1" color="gray" mt="1">
+					Controls the style of Claude's responses.{" "}
+					<Link href="https://code.claude.com/docs/en/output-styles" target="_blank" rel="noopener noreferrer">
+						Learn more
+					</Link>
+				</Text>
+			</Box>
+
+			<Box>
+				<Text as="label" size="2" weight="medium" mb="1" style={{ display: "block" }}>
+					Status Line Command
+				</Text>
+				<TextField.Root
+					placeholder="e.g., ~/.claude/statusline.sh"
+					value={settings.statusLine?.command || ""}
+					onChange={(e) =>
+						onChange({
+							...settings,
+							statusLine: e.target.value
+								? { type: "command", command: e.target.value, padding: settings.statusLine?.padding }
+								: undefined,
+						})
 					}
+					style={{ fontFamily: "monospace" }}
 				/>
-			</Flex>
+				<Text size="1" color="gray" mt="1">
+					Custom command to display in the status line.{" "}
+					<Link href="https://docs.anthropic.com/en/docs/claude-code/statusline" target="_blank" rel="noopener noreferrer">
+						Learn more
+					</Link>
+				</Text>
+			</Box>
+
 		</Flex>
 	);
 }

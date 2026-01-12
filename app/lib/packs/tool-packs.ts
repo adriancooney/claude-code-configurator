@@ -337,6 +337,7 @@ export const TOOL_PACKS: ToolPack[] = [
 			"Bash(terraform destroy:*)",
 			"Bash(terraform import:*)",
 			"Bash(terraform refresh:*)",
+			"Bash(terraform fmt:*)",
 		],
 	},
 	{

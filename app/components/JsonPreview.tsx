@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Box, Button, Callout, Flex, Text } from "@radix-ui/themes";
+import { Box, Button, Flex, Text } from "@radix-ui/themes";
 import { CheckCircledIcon, CopyIcon, CrossCircledIcon, DownloadIcon } from "@radix-ui/react-icons";
 import type { ClaudeCodeSettings } from "../lib/schema";
 import { validateSettings, type ValidationResult } from "../lib/validate";
@@ -73,21 +73,28 @@ export function JsonPreview({ settings }: JsonPreviewProps) {
 			</Flex>
 
 			{validation && !validation.valid && validation.errors.length > 0 && (
-				<Callout.Root color="red" size="1">
-					<Callout.Icon>
-						<CrossCircledIcon />
-					</Callout.Icon>
-					<Callout.Text>
-						<Text size="1" weight="medium">Validation errors:</Text>
-						<Box mt="1">
-							{validation.errors.map((error, i) => (
-								<Text key={i} size="1" as="div" style={{ fontFamily: "monospace" }}>
-									{error.path}: {error.message}
-								</Text>
-							))}
+				<Box
+					style={{
+						background: "var(--red-3)",
+						borderRadius: "var(--radius-2)",
+						padding: "var(--space-3)",
+						border: "1px solid var(--red-6)",
+					}}
+				>
+					<Flex gap="2" align="start">
+						<CrossCircledIcon color="var(--red-9)" style={{ marginTop: 2 }} />
+						<Box>
+							<Text size="1" weight="medium" color="red">Validation errors:</Text>
+							<Box mt="1">
+								{validation.errors.map((error, i) => (
+									<Text key={i} size="1" as="div" style={{ fontFamily: "monospace" }} color="red">
+										{error.path}: {error.message}
+									</Text>
+								))}
+							</Box>
 						</Box>
-					</Callout.Text>
-				</Callout.Root>
+					</Flex>
+				</Box>
 			)}
 
 			<Box

@@ -29,6 +29,12 @@ export interface Hooks {
 	UserPromptSubmit?: HookEntry[];
 }
 
+export interface StatusLine {
+	type: "command";
+	command: string;
+	padding?: number;
+}
+
 export interface ClaudeCodeSettings {
 	$schema?: string;
 	permissions?: Permissions;
@@ -44,6 +50,7 @@ export interface ClaudeCodeSettings {
 	apiKeyHelper?: string;
 	awsCredentialExport?: string;
 	awsAuthRefresh?: string;
+	otelHeadersHelper?: string;
 	forceLoginMethod?: "claudeai" | "console";
 	forceLoginOrgUUID?: string;
 	enableAllProjectMcpServers?: boolean;
@@ -51,6 +58,7 @@ export interface ClaudeCodeSettings {
 	disabledMcpjsonServers?: string[];
 	hooks?: Hooks;
 	disableAllHooks?: boolean;
+	statusLine?: StatusLine;
 	enabledPlugins?: Record<string, boolean>;
 	skippedMarketplaces?: string[];
 	skippedPlugins?: string[];
