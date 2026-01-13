@@ -161,7 +161,7 @@ export default function Home() {
 					...imported,
 				});
 			} catch {
-				alert("Invalid JSON file");
+				alert("Invalid JSON file. Please ensure the file contains valid JSON settings.");
 			}
 		};
 		reader.readAsText(file);

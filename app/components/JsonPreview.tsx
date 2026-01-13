@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AlertDialog, Box, Button, Flex, Text } from "@radix-ui/themes";
-import { CheckCircledIcon, ClipboardIcon, CopyIcon, CrossCircledIcon, DownloadIcon, ResetIcon } from "@radix-ui/react-icons";
+import { CheckCircledIcon, CheckIcon, ClipboardIcon, CopyIcon, CrossCircledIcon, DownloadIcon, ResetIcon } from "@radix-ui/react-icons";
 import type { ClaudeCodeSettings } from "../lib/schema";
 import { DEFAULT_SETTINGS } from "../lib/schema";
 import { validateSettings, type ValidationResult } from "../lib/validate";
@@ -19,6 +19,7 @@ export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 	const [pasteDialogOpen, setPasteDialogOpen] = useState(false);
 	const [clipboardContent, setClipboardContent] = useState("");
 	const [resetDialogOpen, setResetDialogOpen] = useState(false);
+	const [copyState, setCopyState] = useState<"idle" | "copied">("idle");
 
 	useEffect(() => {
 		let cancelled = false;
@@ -38,6 +39,8 @@ export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 
 	const handleCopy = async () => {
 		await navigator.clipboard.writeText(json);
+		setCopyState("copied");
+		setTimeout(() => setCopyState("idle"), 2000);
 	};
 
 	const handleDownload = () => {
@@ -66,7 +69,7 @@ export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 			onSettingsChange(parsed);
 			setPasteDialogOpen(false);
 		} catch {
-			alert("Invalid JSON in clipboard.");
+			alert("Invalid JSON in clipboard. Please ensure you've copied valid JSON settings.");
 		}
 	};
 
@@ -87,8 +90,8 @@ export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 				</Flex>
 				<Flex gap="2">
 					<Button size="1" variant="soft" onClick={handleCopy}>
-						<CopyIcon />
-						Copy
+						{copyState === "copied" ? <CheckIcon /> : <CopyIcon />}
+						{copyState === "copied" ? "Copied" : "Copy"}
 					</Button>
 					<Button size="1" variant="soft" onClick={handlePaste}>
 						<ClipboardIcon />
@@ -150,7 +153,7 @@ export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 				<AlertDialog.Content maxWidth="500px">
 					<AlertDialog.Title>Replace Settings</AlertDialog.Title>
 					<AlertDialog.Description size="2">
-						This will replace your current settings with the contents of your clipboard. This action cannot be undone.
+						This will replace your current settings with the contents of your clipboard.
 					</AlertDialog.Description>
 					<Box
 						mt="3"
@@ -186,7 +189,7 @@ export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 				<AlertDialog.Content maxWidth="400px">
 					<AlertDialog.Title>Reset Settings</AlertDialog.Title>
 					<AlertDialog.Description size="2">
-						This will reset all settings to their defaults. This action cannot be undone.
+						This will reset all settings to their defaults.
 					</AlertDialog.Description>
 					<Flex gap="3" mt="4" justify="end">
 						<AlertDialog.Cancel>

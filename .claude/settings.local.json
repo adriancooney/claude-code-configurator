@@ -19,7 +19,8 @@
       "Bash(cat:*)",
       "WebFetch(domain:platform.claude.com)",
       "WebFetch(domain:claude.ai)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "SlashCommand(/vercel-design-guidelines)"
     ],
     "deny": [],
     "ask": []
