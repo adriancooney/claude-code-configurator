@@ -1,7 +1,6 @@
 "use client";
 
 import { Box, Checkbox, Flex, Text } from "@radix-ui/themes";
-import { LockClosedIcon } from "@radix-ui/react-icons";
 import { TOOL_PACKS, getPackState, togglePack } from "../lib/packs";
 
 interface PackSelectorProps {
@@ -12,27 +11,47 @@ interface PackSelectorProps {
 export function PackSelector({ rules, onChange }: PackSelectorProps) {
 	const getState = (id: string) => getPackState(id, rules);
 
-	const handleToggle = (id: string, field: "read" | "write", checked: boolean) => {
-		onChange(togglePack(id, field, checked, rules));
+	const handleToggle = (id: string, field: "readOnly" | "readWrite", checked: boolean) => {
+		let newRules = [...rules];
+		if (checked) {
+			// When enabling one, disable the other first
+			if (field === "readOnly") {
+				newRules = togglePack(id, "readWrite", false, newRules);
+			} else {
+				newRules = togglePack(id, "readOnly", false, newRules);
+			}
+		}
+		newRules = togglePack(id, field, checked, newRules);
+		onChange(newRules);
 	};
 
-	const allReadEnabled = TOOL_PACKS.every(pack => getState(pack.id).read);
-	const allWriteEnabled = TOOL_PACKS.every(pack => getState(pack.id).write);
-	const someReadEnabled = TOOL_PACKS.some(pack => getState(pack.id).read);
-	const someWriteEnabled = TOOL_PACKS.some(pack => getState(pack.id).write);
+	// Calculate select-all states
+	const packsWithReadOnly = TOOL_PACKS.filter(p => p.readOnly.length > 0);
+	const packsWithReadWrite = TOOL_PACKS.filter(p => p.readWrite.length > 0);
 
-	const toggleAllRead = (checked: boolean) => {
+	const allReadOnlySelected = packsWithReadOnly.length > 0 && packsWithReadOnly.every(p => getState(p.id).readOnly);
+	const allReadWriteSelected = packsWithReadWrite.length > 0 && packsWithReadWrite.every(p => getState(p.id).readWrite);
+
+	const handleSelectAllReadOnly = (checked: boolean) => {
 		let newRules = [...rules];
-		for (const pack of TOOL_PACKS) {
-			newRules = togglePack(pack.id, "read", checked, newRules);
+		for (const pack of packsWithReadOnly) {
+			if (checked) {
+				// Disable read-write first when enabling read-only
+				newRules = togglePack(pack.id, "readWrite", false, newRules);
+			}
+			newRules = togglePack(pack.id, "readOnly", checked, newRules);
 		}
 		onChange(newRules);
 	};
 
-	const toggleAllWrite = (checked: boolean) => {
+	const handleSelectAllReadWrite = (checked: boolean) => {
 		let newRules = [...rules];
-		for (const pack of TOOL_PACKS) {
-			newRules = togglePack(pack.id, "write", checked, newRules);
+		for (const pack of packsWithReadWrite) {
+			if (checked) {
+				// Disable read-only first when enabling read-write
+				newRules = togglePack(pack.id, "readOnly", false, newRules);
+			}
+			newRules = togglePack(pack.id, "readWrite", checked, newRules);
 		}
 		onChange(newRules);
 	};
@@ -61,23 +80,23 @@ export function PackSelector({ rules, onChange }: PackSelectorProps) {
 						Pre-configured permission sets for common tools.
 					</Text>
 				</Box>
-				<Flex gap="4" px="2" py="1">
+				<Flex gap="4" align="center" px="2" py="1">
 					<Text as="label" size="2">
 						<Flex gap="2" align="center">
 							<Checkbox
-								checked={allReadEnabled ? true : someReadEnabled ? "indeterminate" : false}
-								onCheckedChange={(c) => toggleAllRead(c === true)}
+								checked={allReadOnlySelected}
+								onCheckedChange={(c) => handleSelectAllReadOnly(c === true)}
 							/>
-							Read
+							Read-only
 						</Flex>
 					</Text>
 					<Text as="label" size="2">
 						<Flex gap="2" align="center">
 							<Checkbox
-								checked={allWriteEnabled ? true : someWriteEnabled ? "indeterminate" : false}
-								onCheckedChange={(c) => toggleAllWrite(c === true)}
+								checked={allReadWriteSelected}
+								onCheckedChange={(c) => handleSelectAllReadWrite(c === true)}
 							/>
-							Write
+							Read-write
 						</Flex>
 					</Text>
 				</Flex>
@@ -85,46 +104,35 @@ export function PackSelector({ rules, onChange }: PackSelectorProps) {
 			<Flex direction="column" gap="3">
 				{TOOL_PACKS.map((pack) => {
 					const state = getState(pack.id);
-					const isLinked = pack.singleToggle;
+					const hasReadOnly = pack.readOnly.length > 0;
+					const hasReadWrite = pack.readWrite.length > 0;
 					return (
 						<Flex key={pack.id} justify="between" align="center">
 							<Flex direction="column" gap="0">
 								<Text size="2" weight="medium">{pack.name}</Text>
 								<Text size="1" color="gray">{pack.description}</Text>
 							</Flex>
-							<Flex
-								gap="3"
-								align="center"
-								px="2"
-								py="1"
-								style={isLinked ? {
-									background: "var(--gray-a3)",
-									borderRadius: "var(--radius-2)",
-								} : undefined}
-							>
-								{isLinked && (
-									<LockClosedIcon color="var(--gray-9)" style={{ width: 12, height: 12 }} />
-								)}
-								<Flex gap="4" align="center">
-									<Text as="label" size="2">
-										<Flex gap="2" align="center">
-											<Checkbox
-												checked={state.read}
-												onCheckedChange={(c) => handleToggle(pack.id, "read", c === true)}
-											/>
-											Read
-										</Flex>
-									</Text>
-									<Text as="label" size="2">
-										<Flex gap="2" align="center">
-											<Checkbox
-												checked={state.write}
-												onCheckedChange={(c) => handleToggle(pack.id, "write", c === true)}
-											/>
-											Write
-										</Flex>
-									</Text>
-								</Flex>
+							<Flex gap="4" align="center" px="2" py="1">
+								<Text as="label" size="2" color={hasReadOnly ? undefined : "gray"}>
+									<Flex gap="2" align="center">
+										<Checkbox
+											checked={state.readOnly}
+											disabled={!hasReadOnly}
+											onCheckedChange={(c) => handleToggle(pack.id, "readOnly", c === true)}
+										/>
+										Read-only
+									</Flex>
+								</Text>
+								<Text as="label" size="2" color={hasReadWrite ? undefined : "gray"}>
+									<Flex gap="2" align="center">
+										<Checkbox
+											checked={state.readWrite}
+											disabled={!hasReadWrite}
+											onCheckedChange={(c) => handleToggle(pack.id, "readWrite", c === true)}
+										/>
+										Read-write
+									</Flex>
+								</Text>
 							</Flex>
 						</Flex>
 					);

@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { AlertDialog, Box, Button, Flex, Text } from "@radix-ui/themes";
-import { CheckCircledIcon, ClipboardIcon, CopyIcon, CrossCircledIcon, DownloadIcon } from "@radix-ui/react-icons";
+import { CheckCircledIcon, ClipboardIcon, CopyIcon, CrossCircledIcon, DownloadIcon, ResetIcon } from "@radix-ui/react-icons";
 import type { ClaudeCodeSettings } from "../lib/schema";
+import { DEFAULT_SETTINGS } from "../lib/schema";
 import { validateSettings, type ValidationResult } from "../lib/validate";
 
 interface JsonPreviewProps {
@@ -17,6 +18,7 @@ export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 	const [isValidating, setIsValidating] = useState(false);
 	const [pasteDialogOpen, setPasteDialogOpen] = useState(false);
 	const [clipboardContent, setClipboardContent] = useState("");
+	const [resetDialogOpen, setResetDialogOpen] = useState(false);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -96,6 +98,10 @@ export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 						<DownloadIcon />
 						Download
 					</Button>
+					<Button size="1" variant="soft" color="red" onClick={() => setResetDialogOpen(true)}>
+						<ResetIcon />
+						Reset
+					</Button>
 				</Flex>
 			</Flex>
 
@@ -170,6 +176,27 @@ export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 						<AlertDialog.Action>
 							<Button variant="solid" color="red" onClick={confirmPaste}>
 								Replace Settings
+							</Button>
+						</AlertDialog.Action>
+					</Flex>
+				</AlertDialog.Content>
+			</AlertDialog.Root>
+
+			<AlertDialog.Root open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+				<AlertDialog.Content maxWidth="400px">
+					<AlertDialog.Title>Reset Settings</AlertDialog.Title>
+					<AlertDialog.Description size="2">
+						This will reset all settings to their defaults. This action cannot be undone.
+					</AlertDialog.Description>
+					<Flex gap="3" mt="4" justify="end">
+						<AlertDialog.Cancel>
+							<Button variant="soft" color="gray">
+								Cancel
+							</Button>
+						</AlertDialog.Cancel>
+						<AlertDialog.Action>
+							<Button variant="solid" color="red" onClick={() => onSettingsChange(DEFAULT_SETTINGS)}>
+								Reset Settings
 							</Button>
 						</AlertDialog.Action>
 					</Flex>

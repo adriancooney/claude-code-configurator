@@ -42,12 +42,15 @@ function decodeSettings(encoded: string): ClaudeCodeSettings | null {
 	}
 }
 
+const STORAGE_KEY = "claude-code-configurator-settings";
+
 export default function Home() {
 	const [settings, setSettings] = useState<ClaudeCodeSettings>(DEFAULT_SETTINGS);
 	const [shareModalOpen, setShareModalOpen] = useState(false);
 	const [shareUrl, setShareUrl] = useState("");
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
+	// Load from URL param or localStorage on mount
 	useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
 		const config = params.get("config");
@@ -58,9 +61,29 @@ export default function Home() {
 					$schema: "https://json.schemastore.org/claude-code-settings.json",
 					...decoded,
 				});
+				return;
+			}
+		}
+
+		// Load from localStorage if no URL param
+		const stored = localStorage.getItem(STORAGE_KEY);
+		if (stored) {
+			try {
+				const parsed = JSON.parse(stored);
+				setSettings({
+					$schema: "https://json.schemastore.org/claude-code-settings.json",
+					...parsed,
+				});
+			} catch {
+				// Ignore invalid stored data
 			}
 		}
 	}, []);
+
+	// Save to localStorage whenever settings change
+	useEffect(() => {
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+	}, [settings]);
 
 	const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
@@ -302,7 +325,7 @@ export default function Home() {
 
 				<Box
 					style={{
-						width: 480,
+						width: 540,
 						borderLeft: "1px solid var(--gray-5)",
 						padding: "var(--space-6)",
 						background: "var(--gray-2)",

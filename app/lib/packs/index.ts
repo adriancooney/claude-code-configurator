@@ -7,22 +7,23 @@ export { WEB_PACKS } from "./web-packs";
 
 export interface PackState {
 	id: string;
-	read: boolean;
-	write: boolean;
+	readOnly: boolean;
+	readWrite: boolean;
 }
 
 export function getPackState(packId: string, rules: string[]): PackState {
 	const pack = TOOL_PACKS.find(p => p.id === packId);
-	if (!pack) return { id: packId, read: false, write: false };
+	if (!pack) return { id: packId, readOnly: false, readWrite: false };
 
 	const rulesSet = new Set(rules);
-	const hasAllRead = pack.read.length > 0 && pack.read.every(r => rulesSet.has(r));
-	const hasAllWrite = pack.write.length > 0 && pack.write.every(r => rulesSet.has(r));
+	const hasAllReadOnly = pack.readOnly.length > 0 && pack.readOnly.every(r => rulesSet.has(r));
+	const hasAllReadWrite = pack.readWrite.length > 0 && pack.readWrite.every(r => rulesSet.has(r));
 
+	// They're mutually exclusive - readWrite takes priority
 	return {
 		id: packId,
-		read: hasAllRead,
-		write: hasAllWrite || (pack.singleToggle === true && hasAllRead),
+		readOnly: hasAllReadOnly && !hasAllReadWrite,
+		readWrite: hasAllReadWrite,
 	};
 }
 
@@ -40,7 +41,7 @@ export function getWebPackState(packId: string, rules: string[]): boolean {
 
 export function togglePack(
 	packId: string,
-	field: "read" | "write",
+	field: "readOnly" | "readWrite",
 	enabled: boolean,
 	currentRules: string[]
 ): string[] {
@@ -48,27 +49,12 @@ export function togglePack(
 	if (!pack) return currentRules;
 
 	const rulesSet = new Set(currentRules);
+	const rules = field === "readOnly" ? pack.readOnly : pack.readWrite;
 
-	if (pack.singleToggle) {
-		if (enabled) {
-			pack.read.forEach(r => rulesSet.add(r));
-		} else {
-			pack.read.forEach(r => rulesSet.delete(r));
-		}
+	if (enabled) {
+		rules.forEach(r => rulesSet.add(r));
 	} else {
-		if (field === "read") {
-			if (enabled) {
-				pack.read.forEach(r => rulesSet.add(r));
-			} else {
-				pack.read.forEach(r => rulesSet.delete(r));
-			}
-		} else {
-			if (enabled) {
-				pack.write.forEach(r => rulesSet.add(r));
-			} else {
-				pack.write.forEach(r => rulesSet.delete(r));
-			}
-		}
+		rules.forEach(r => rulesSet.delete(r));
 	}
 
 	return [...rulesSet];
@@ -100,11 +86,11 @@ export function getPackRules(rules: string[]): Set<string> {
 
 	for (const pack of TOOL_PACKS) {
 		const state = getPackState(pack.id, rules);
-		if (state.read) {
-			pack.read.forEach(r => packRules.add(r));
+		if (state.readOnly) {
+			pack.readOnly.forEach(r => packRules.add(r));
 		}
-		if (state.write) {
-			pack.write.forEach(r => packRules.add(r));
+		if (state.readWrite) {
+			pack.readWrite.forEach(r => packRules.add(r));
 		}
 	}
 

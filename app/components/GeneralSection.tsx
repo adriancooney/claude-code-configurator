@@ -6,11 +6,12 @@ import type { ClaudeCodeSettings } from "../lib/schema";
 
 const MODELS = [
 	{ value: "__default__", label: "Default (no override)", token: null },
-	{ value: "claude-sonnet-4-20250514", label: "Claude Sonnet 4", token: "claude-sonnet-4-20250514" },
-	{ value: "claude-opus-4-20250514", label: "Claude Opus 4", token: "claude-opus-4-20250514" },
-	{ value: "claude-sonnet-4-5-20250514", label: "Claude Sonnet 4.5", token: "claude-sonnet-4-5-20250514" },
-	{ value: "claude-opus-4-5-20250514", label: "Claude Opus 4.5", token: "claude-opus-4-5-20250514" },
-	{ value: "claude-haiku-4-5-20250514", label: "Claude Haiku 4.5", token: "claude-haiku-4-5-20250514" },
+	{ value: "claude-sonnet-4-5", label: "Claude Sonnet 4.5", token: "claude-sonnet-4-5" },
+	{ value: "claude-opus-4-5", label: "Claude Opus 4.5", token: "claude-opus-4-5" },
+	{ value: "claude-haiku-4-5", label: "Claude Haiku 4.5", token: "claude-haiku-4-5" },
+	{ value: "claude-sonnet-4-0", label: "Claude Sonnet 4", token: "claude-sonnet-4-0" },
+	{ value: "claude-opus-4-0", label: "Claude Opus 4", token: "claude-opus-4-0" },
+	{ value: "claude-opus-4-1", label: "Claude Opus 4.1", token: "claude-opus-4-1" },
 	{ value: "custom", label: "Custom...", token: null },
 ];
 

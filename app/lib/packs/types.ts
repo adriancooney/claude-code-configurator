@@ -2,9 +2,8 @@ export interface ToolPack {
 	id: string;
 	name: string;
 	description: string;
-	read: string[];
-	write: string[];
-	singleToggle?: boolean;
+	readOnly: string[];
+	readWrite: string[];
 }
 
 export interface WebPack {

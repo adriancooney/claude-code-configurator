@@ -5,12 +5,10 @@ export const TOOL_PACKS: ToolPack[] = [
 		id: "filesystem",
 		name: "Filesystem",
 		description: "Read, Edit, Write, Glob, Grep, ls, find, cat, mkdir, rm, cp, mv",
-		read: [
-			// Claude tools
+		readOnly: [
 			"Read",
 			"Glob",
 			"Grep",
-			// Bash commands
 			"Bash(ls:*)",
 			"Bash(find:*)",
 			"Bash(cat:*)",
@@ -28,11 +26,28 @@ export const TOOL_PACKS: ToolPack[] = [
 			"Bash(dirname:*)",
 			"Bash(basename:*)",
 		],
-		write: [
-			// Claude tools
+		readWrite: [
+			"Read",
+			"Glob",
+			"Grep",
 			"Edit",
 			"Write",
-			// Bash commands
+			"Bash(ls:*)",
+			"Bash(find:*)",
+			"Bash(cat:*)",
+			"Bash(head:*)",
+			"Bash(tail:*)",
+			"Bash(less:*)",
+			"Bash(more:*)",
+			"Bash(file:*)",
+			"Bash(stat:*)",
+			"Bash(du:*)",
+			"Bash(df:*)",
+			"Bash(tree:*)",
+			"Bash(pwd:*)",
+			"Bash(realpath:*)",
+			"Bash(dirname:*)",
+			"Bash(basename:*)",
 			"Bash(mkdir:*)",
 			"Bash(touch:*)",
 			"Bash(rm:*)",
@@ -48,111 +63,53 @@ export const TOOL_PACKS: ToolPack[] = [
 		id: "nodejs",
 		name: "Node.js",
 		description: "npm, pnpm, yarn, TypeScript, jest, vitest, fnm, nvm",
-		read: [
-			// node
+		readOnly: [
 			"Bash(node --version:*)",
-			// npm
 			"Bash(npm list:*)",
 			"Bash(npm view:*)",
 			"Bash(npm outdated:*)",
 			"Bash(npm search:*)",
 			"Bash(npm audit:*)",
-			// pnpm
 			"Bash(pnpm list:*)",
 			"Bash(pnpm outdated:*)",
 			"Bash(pnpm audit:*)",
-			// yarn
 			"Bash(yarn list:*)",
 			"Bash(yarn info:*)",
 			"Bash(yarn outdated:*)",
 			"Bash(yarn audit:*)",
-			// typescript
 			"Bash(tsc --version:*)",
 			"Bash(tsc --showConfig:*)",
 			"Bash(tsc --listFiles:*)",
-			// jest
 			"Bash(jest --version:*)",
 			"Bash(jest --listTests:*)",
-			// vitest
 			"Bash(vitest --version:*)",
 			"Bash(vitest list:*)",
-			// fnm
 			"Bash(fnm list:*)",
 			"Bash(fnm current:*)",
 			"Bash(fnm ls-remote:*)",
-			// nvm
 			"Bash(nvm list:*)",
 			"Bash(nvm current:*)",
 			"Bash(nvm ls-remote:*)",
+			"Bash(tsc --noEmit:*)",
 		],
-		write: [
-			// node
+		readWrite: [
 			"Bash(node:*)",
-			"Bash(node -e:*)",
-			"Bash(node -p:*)",
-			// npx
 			"Bash(npx:*)",
-			// npm
-			"Bash(npm install:*)",
-			"Bash(npm uninstall:*)",
-			"Bash(npm update:*)",
-			"Bash(npm run:*)",
-			"Bash(npm start:*)",
-			"Bash(npm test:*)",
-			"Bash(npm build:*)",
-			"Bash(npm publish:*)",
-			"Bash(npm init:*)",
-			"Bash(npm exec:*)",
-			"Bash(npm create:*)",
-			// pnpm
-			"Bash(pnpm install:*)",
-			"Bash(pnpm add:*)",
-			"Bash(pnpm remove:*)",
-			"Bash(pnpm update:*)",
-			"Bash(pnpm run:*)",
-			"Bash(pnpm start:*)",
-			"Bash(pnpm test:*)",
-			"Bash(pnpm build:*)",
-			"Bash(pnpm exec:*)",
-			"Bash(pnpm dlx:*)",
-			"Bash(pnpm create:*)",
-			// yarn
-			"Bash(yarn install:*)",
-			"Bash(yarn add:*)",
-			"Bash(yarn remove:*)",
-			"Bash(yarn upgrade:*)",
-			"Bash(yarn run:*)",
-			"Bash(yarn start:*)",
-			"Bash(yarn test:*)",
-			"Bash(yarn build:*)",
-			"Bash(yarn create:*)",
-			"Bash(yarn dlx:*)",
-			// typescript
+			"Bash(npm:*)",
+			"Bash(pnpm:*)",
+			"Bash(yarn:*)",
 			"Bash(tsc:*)",
-			"Bash(tsc --build:*)",
-			"Bash(tsc --watch:*)",
-			"Bash(tsc --init:*)",
-			// jest
 			"Bash(jest:*)",
-			// vitest
 			"Bash(vitest:*)",
-			"Bash(vitest run:*)",
-			"Bash(vitest watch:*)",
-			// fnm
-			"Bash(fnm install:*)",
-			"Bash(fnm use:*)",
-			"Bash(fnm default:*)",
-			// nvm
-			"Bash(nvm install:*)",
-			"Bash(nvm use:*)",
-			"Bash(nvm alias:*)",
+			"Bash(fnm:*)",
+			"Bash(nvm:*)",
 		],
 	},
 	{
 		id: "git",
 		name: "Git",
 		description: "Version control operations",
-		read: [
+		readOnly: [
 			"Bash(git status:*)",
 			"Bash(git log:*)",
 			"Bash(git diff:*)",
@@ -163,25 +120,15 @@ export const TOOL_PACKS: ToolPack[] = [
 			"Bash(git stash list:*)",
 			"Bash(git fetch:*)",
 		],
-		write: [
-			"Bash(git add:*)",
-			"Bash(git commit:*)",
-			"Bash(git push:*)",
-			"Bash(git pull:*)",
-			"Bash(git merge:*)",
-			"Bash(git rebase:*)",
-			"Bash(git checkout:*)",
-			"Bash(git switch:*)",
-			"Bash(git reset:*)",
-			"Bash(git stash:*)",
-			"Bash(git cherry-pick:*)",
+		readWrite: [
+			"Bash(git:*)",
 		],
 	},
 	{
 		id: "gt",
 		name: "Graphite",
 		description: "Stacked PRs and code review workflow",
-		read: [
+		readOnly: [
 			"Bash(gt log:*)",
 			"Bash(gt ls:*)",
 			"Bash(gt status:*)",
@@ -191,24 +138,15 @@ export const TOOL_PACKS: ToolPack[] = [
 			"Bash(gt top:*)",
 			"Bash(gt bottom:*)",
 		],
-		write: [
-			"Bash(gt create:*)",
-			"Bash(gt modify:*)",
-			"Bash(gt sync:*)",
-			"Bash(gt submit:*)",
-			"Bash(gt move:*)",
-			"Bash(gt fold:*)",
-			"Bash(gt reorder:*)",
-			"Bash(gt split:*)",
-			"Bash(gt squash:*)",
-			"Bash(gt track:*)",
+		readWrite: [
+			"Bash(gt:*)",
 		],
 	},
 	{
 		id: "gh",
 		name: "GitHub CLI",
 		description: "GitHub operations from the terminal",
-		read: [
+		readOnly: [
 			"Bash(gh pr list:*)",
 			"Bash(gh pr view:*)",
 			"Bash(gh pr status:*)",
@@ -221,21 +159,15 @@ export const TOOL_PACKS: ToolPack[] = [
 			"Bash(gh run list:*)",
 			"Bash(gh run view:*)",
 		],
-		write: [
-			"Bash(gh pr create:*)",
-			"Bash(gh pr merge:*)",
-			"Bash(gh pr review:*)",
-			"Bash(gh pr comment:*)",
-			"Bash(gh issue create:*)",
-			"Bash(gh issue close:*)",
-			"Bash(gh run rerun:*)",
+		readWrite: [
+			"Bash(gh:*)",
 		],
 	},
 	{
 		id: "docker",
 		name: "Docker",
 		description: "Container management",
-		read: [
+		readOnly: [
 			"Bash(docker ps:*)",
 			"Bash(docker images:*)",
 			"Bash(docker logs:*)",
@@ -245,17 +177,8 @@ export const TOOL_PACKS: ToolPack[] = [
 			"Bash(docker volume ls:*)",
 			"Bash(docker network ls:*)",
 		],
-		write: [
-			"Bash(docker run:*)",
-			"Bash(docker build:*)",
-			"Bash(docker push:*)",
-			"Bash(docker pull:*)",
-			"Bash(docker stop:*)",
-			"Bash(docker start:*)",
-			"Bash(docker restart:*)",
-			"Bash(docker rm:*)",
-			"Bash(docker rmi:*)",
-			"Bash(docker exec:*)",
+		readWrite: [
+			"Bash(docker:*)",
 			"Bash(docker compose:*)",
 		],
 	},
@@ -263,23 +186,23 @@ export const TOOL_PACKS: ToolPack[] = [
 		id: "nextjs",
 		name: "Next.js",
 		description: "Next.js development commands",
-		read: [
+		readOnly: [
 			"Bash(next info:*)",
 			"Bash(next lint:*)",
 			"mcp__next-devtools__nextjs_index",
 			"mcp__next-devtools__nextjs_call",
 		],
-		write: [
-			"Bash(next dev:*)",
-			"Bash(next build:*)",
-			"Bash(next start:*)",
+		readWrite: [
+			"Bash(next:*)",
+			"mcp__next-devtools__nextjs_index",
+			"mcp__next-devtools__nextjs_call",
 		],
 	},
 	{
 		id: "vercel",
 		name: "Vercel",
 		description: "Vercel platform CLI",
-		read: [
+		readOnly: [
 			"Bash(vercel list:*)",
 			"Bash(vercel inspect:*)",
 			"Bash(vercel logs:*)",
@@ -290,64 +213,46 @@ export const TOOL_PACKS: ToolPack[] = [
 			"Bash(vercel domains:*)",
 			"Bash(vercel certs:*)",
 		],
-		write: [
+		readWrite: [
 			"Bash(vercel:*)",
-			"Bash(vercel deploy:*)",
-			"Bash(vercel dev:*)",
-			"Bash(vercel build:*)",
-			"Bash(vercel pull:*)",
-			"Bash(vercel link:*)",
-			"Bash(vercel promote:*)",
-			"Bash(vercel rollback:*)",
-			"Bash(vercel redeploy:*)",
 		],
 	},
 	{
 		id: "kubernetes",
 		name: "Kubernetes",
 		description: "Container orchestration",
-		read: [
+		readOnly: [
 			"Bash(kubectl get:*)",
 			"Bash(kubectl describe:*)",
 			"Bash(kubectl logs:*)",
 			"Bash(kubectl top:*)",
 			"Bash(kubectl config:*)",
 		],
-		write: [
-			"Bash(kubectl apply:*)",
-			"Bash(kubectl delete:*)",
-			"Bash(kubectl create:*)",
-			"Bash(kubectl scale:*)",
-			"Bash(kubectl rollout:*)",
-			"Bash(kubectl exec:*)",
+		readWrite: [
+			"Bash(kubectl:*)",
 		],
 	},
 	{
 		id: "terraform",
 		name: "Terraform",
 		description: "Infrastructure as code",
-		read: [
+		readOnly: [
 			"Bash(terraform show:*)",
 			"Bash(terraform state:*)",
 			"Bash(terraform plan:*)",
 			"Bash(terraform output:*)",
 			"Bash(terraform validate:*)",
 		],
-		write: [
-			"Bash(terraform init:*)",
-			"Bash(terraform apply:*)",
-			"Bash(terraform destroy:*)",
-			"Bash(terraform import:*)",
-			"Bash(terraform refresh:*)",
-			"Bash(terraform fmt:*)",
+		readWrite: [
+			"Bash(terraform:*)",
 		],
 	},
 	{
 		id: "data-processing",
 		name: "Data Processing",
 		description: "jq, yq, sed, awk, sort, grep, and more",
-		singleToggle: true,
-		read: [
+		readOnly: [],
+		readWrite: [
 			"Bash(jq:*)",
 			"Bash(yq:*)",
 			"Bash(sed:*)",
@@ -363,39 +268,49 @@ export const TOOL_PACKS: ToolPack[] = [
 			"Bash(xargs:*)",
 			"Bash(tee:*)",
 		],
-		write: [],
 	},
 	{
 		id: "http",
 		name: "HTTP",
 		description: "curl, wget, httpie for API requests",
-		singleToggle: true,
-		read: [
+		readOnly: [],
+		readWrite: [
 			"Bash(curl:*)",
 			"Bash(wget:*)",
 			"Bash(http:*)",
 			"Bash(https:*)",
 		],
-		write: [],
 	},
 	{
 		id: "ssh",
 		name: "SSH",
 		description: "Secure shell connections and remote commands",
-		singleToggle: true,
-		read: [
+		readOnly: [],
+		readWrite: [
 			"Bash(ssh:*)",
 			"Bash(scp:*)",
 			"Bash(ssh-keygen:*)",
 			"Bash(ssh-add:*)",
 		],
-		write: [],
+	},
+	{
+		id: "cdk",
+		name: "AWS CDK",
+		description: "AWS Cloud Development Kit",
+		readOnly: [
+			"Bash(cdk list:*)",
+			"Bash(cdk diff:*)",
+			"Bash(cdk doctor:*)",
+		],
+		readWrite: [
+			"Bash(cdk:*)",
+		],
 	},
 	{
 		id: "aws",
 		name: "AWS CLI",
 		description: "S3, Lambda, DynamoDB, EC2, CloudWatch, IAM",
-		read: [
+		readOnly: [
 			"Bash(aws s3 ls:*)",
 			"Bash(aws s3api get-object:*)",
 			"Bash(aws s3api head-object:*)",
@@ -421,25 +336,18 @@ export const TOOL_PACKS: ToolPack[] = [
 			"Bash(aws ssm get-parameter:*)",
 			"Bash(aws secretsmanager get-secret-value:*)",
 		],
-		write: [
-			"Bash(aws s3 cp:*)",
-			"Bash(aws s3 sync:*)",
-			"Bash(aws s3 rm:*)",
-			"Bash(aws s3 mb:*)",
-			"Bash(aws s3api put-object:*)",
-			"Bash(aws dynamodb put-item:*)",
-			"Bash(aws dynamodb update-item:*)",
-			"Bash(aws dynamodb delete-item:*)",
-			"Bash(aws lambda invoke:*)",
-			"Bash(aws lambda update-function-code:*)",
-			"Bash(aws lambda create-function:*)",
-			"Bash(aws ec2 start-instances:*)",
-			"Bash(aws ec2 stop-instances:*)",
-			"Bash(aws ec2 run-instances:*)",
-			"Bash(aws cloudformation deploy:*)",
-			"Bash(aws cloudformation create-stack:*)",
-			"Bash(aws cloudformation update-stack:*)",
-			"Bash(aws ssm put-parameter:*)",
+		readWrite: [
+			"Bash(aws s3:*)",
+			"Bash(aws s3api:*)",
+			"Bash(aws dynamodb:*)",
+			"Bash(aws lambda:*)",
+			"Bash(aws logs:*)",
+			"Bash(aws ec2:*)",
+			"Bash(aws iam:*)",
+			"Bash(aws sts:*)",
+			"Bash(aws cloudformation:*)",
+			"Bash(aws ssm:*)",
+			"Bash(aws secretsmanager:*)",
 		],
 	},
 ];
