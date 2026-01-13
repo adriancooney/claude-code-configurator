@@ -123,11 +123,6 @@ export function RuleList({
 				</Flex>
 			)}
 			<Flex direction="column" gap="2">
-				{rules.length === 0 && (
-					<Text size="1" color="gray" style={{ fontStyle: "italic" }}>
-						No rules configured
-					</Text>
-				)}
 				{rules.map((rule, index) => {
 					const ruleValidation = getValidationForRule(rule);
 					return (
