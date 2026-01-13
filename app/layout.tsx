@@ -4,7 +4,7 @@ import "@radix-ui/themes/styles.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-	title: "Claude Code Permissions Configurator",
+	title: "Claude Code Configurator",
 	description: "Visual configuration tool for Claude Code settings.json",
 };
 
