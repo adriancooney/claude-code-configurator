@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertDialog, Box, Button, Flex, Text } from "@radix-ui/themes";
+import { AlertDialog, Box, Button, Flex, Text, Tooltip } from "@radix-ui/themes";
 import { CheckCircledIcon, CheckIcon, ClipboardIcon, CopyIcon, CrossCircledIcon, DownloadIcon, ResetIcon } from "@radix-ui/react-icons";
 import type { ClaudeCodeSettings } from "../lib/schema";
 import { DEFAULT_SETTINGS } from "../lib/schema";
@@ -82,9 +82,13 @@ export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 					</Text>
 					{validation && !isValidating && (
 						validation.valid ? (
-							<CheckCircledIcon color="var(--green-9)" />
+							<Tooltip content="Valid JSON schema">
+								<CheckCircledIcon color="var(--green-9)" style={{ cursor: "help" }} />
+							</Tooltip>
 						) : (
-							<CrossCircledIcon color="var(--red-9)" />
+							<Tooltip content="Invalid JSON schema">
+								<CrossCircledIcon color="var(--red-9)" style={{ cursor: "help" }} />
+							</Tooltip>
 						)
 					)}
 				</Flex>
