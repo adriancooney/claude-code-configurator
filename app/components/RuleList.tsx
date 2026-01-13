@@ -3,6 +3,7 @@
 import { Box, Button, Checkbox, Flex, IconButton, Text, TextField, Dialog } from "@radix-ui/themes";
 import { Cross2Icon, PlusIcon, GlobeIcon, LightningBoltIcon, FileIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
+import { ExternalLink } from "./ExternalLink";
 
 const VALID_TOOLS = ["Bash", "Read", "Write", "Edit", "Glob", "Grep", "WebFetch", "WebSearch", "Task", "TodoRead", "TodoWrite", "NotebookEdit"];
 
@@ -51,6 +52,7 @@ interface QuickAction {
 	icon: React.ReactNode;
 	placeholder: string;
 	description?: string;
+	helpContent?: React.ReactNode;
 	hasFileOptions?: boolean;
 	generate: (input: string, options?: { read?: boolean; edit?: boolean }) => string[];
 }
@@ -211,7 +213,8 @@ function QuickActionButton({
 	};
 
 	const options = action.hasFileOptions ? { read: readChecked, edit: editChecked } : undefined;
-	const preview = input.trim() ? action.generate(input.trim(), options) : action.generate(action.placeholder, options);
+	const hasInput = !!input.trim();
+	const preview = hasInput ? action.generate(input.trim(), options) : action.generate(action.placeholder, options);
 
 	return (
 		<Dialog.Root open={open} onOpenChange={setOpen}>
@@ -256,6 +259,11 @@ function QuickActionButton({
 							</Text>
 						</Flex>
 					)}
+					{action.helpContent && (
+						<Box>
+							{action.helpContent}
+						</Box>
+					)}
 					<Box>
 						<Text size="1" color="gray" mb="1" style={{ display: "block" }}>
 							Will add:
@@ -267,6 +275,7 @@ function QuickActionButton({
 								padding: "var(--space-2)",
 								fontFamily: "monospace",
 								fontSize: "12px",
+								opacity: hasInput ? 1 : 0.5,
 							}}
 						>
 							{preview.map((rule) => (
@@ -306,7 +315,27 @@ export const ALLOW_QUICK_ACTIONS: QuickAction[] = [
 		label: "Allow command",
 		icon: <LightningBoltIcon />,
 		placeholder: "docker",
-		description: "For subcommands, use 'cmd subcommand' (e.g., 'npm install')",
+		helpContent: (
+			<>
+				<Text size="1" color="gray" as="p" mb="2">
+					<strong>Patterns:</strong>
+				</Text>
+				<Text size="1" color="gray" as="p" style={{ marginLeft: 8 }}>
+					• <code>git:*</code> — prefix match (git, git status, etc.)
+				</Text>
+				<Text size="1" color="gray" as="p" style={{ marginLeft: 8 }}>
+					• <code>npm *</code> — wildcard (npm install, npm run, etc.)
+				</Text>
+				<Text size="1" color="gray" as="p" style={{ marginLeft: 8 }}>
+					• <code>* --version</code> — wildcard (node --version, etc.)
+				</Text>
+				<Text size="1" color="gray" as="p" mt="2">
+					<ExternalLink href="https://code.claude.com/docs/en/iam#tool-specific-permission-rules">
+						Learn more about permission rules
+					</ExternalLink>
+				</Text>
+			</>
+		),
 		generate: (cmd) => [`Bash(${cmd}:*)`],
 	},
 	{
@@ -344,7 +373,27 @@ export const DENY_QUICK_ACTIONS: QuickAction[] = [
 		label: "Block command",
 		icon: <LightningBoltIcon />,
 		placeholder: "rm -rf",
-		description: "For subcommands, use 'cmd subcommand' (e.g., 'git push')",
+		helpContent: (
+			<>
+				<Text size="1" color="gray" as="p" mb="2">
+					<strong>Patterns:</strong>
+				</Text>
+				<Text size="1" color="gray" as="p" style={{ marginLeft: 8 }}>
+					• <code>rm -rf:*</code> — prefix match (rm -rf /, etc.)
+				</Text>
+				<Text size="1" color="gray" as="p" style={{ marginLeft: 8 }}>
+					• <code>git push *</code> — wildcard (git push origin, etc.)
+				</Text>
+				<Text size="1" color="gray" as="p" style={{ marginLeft: 8 }}>
+					• <code>* --force</code> — wildcard (git push --force, etc.)
+				</Text>
+				<Text size="1" color="gray" as="p" mt="2">
+					<ExternalLink href="https://code.claude.com/docs/en/iam#tool-specific-permission-rules">
+						Learn more about permission rules
+					</ExternalLink>
+				</Text>
+			</>
+		),
 		generate: (cmd) => [`Bash(${cmd}:*)`],
 	},
 ];
