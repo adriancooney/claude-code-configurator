@@ -82,11 +82,11 @@ export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 					</Text>
 					{validation && !isValidating && (
 						validation.valid ? (
-							<Tooltip content="Valid settings.json schema" color="green">
+							<Tooltip content="Valid settings.json schema">
 								<CheckCircledIcon color="var(--green-9)" style={{ cursor: "help" }} />
 							</Tooltip>
 						) : (
-							<Tooltip content="Invalid settings.json schema" color="red">
+							<Tooltip content="Invalid settings.json schema">
 								<CrossCircledIcon color="var(--red-9)" style={{ cursor: "help" }} />
 							</Tooltip>
 						)

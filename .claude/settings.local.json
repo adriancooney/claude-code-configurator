@@ -20,7 +20,11 @@
       "WebFetch(domain:platform.claude.com)",
       "WebFetch(domain:claude.ai)",
       "Bash(git push:*)",
-      "SlashCommand(/vercel-design-guidelines)"
+      "SlashCommand(/vercel-design-guidelines)",
+      "mcp__vercel__list_teams",
+      "mcp__vercel__list_projects",
+      "mcp__vercel__list_deployments",
+      "mcp__vercel__get_deployment_build_logs"
     ],
     "deny": [],
     "ask": []
