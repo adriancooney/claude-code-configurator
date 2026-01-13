@@ -1,9 +1,10 @@
 "use client";
 
-import { Box, Button, Flex, IconButton, Link, Select, Switch, Text, TextField } from "@radix-ui/themes";
+import { Box, Button, Flex, IconButton, Select, Switch, Text, TextField } from "@radix-ui/themes";
 import { Cross2Icon, PlusIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import type { ClaudeCodeSettings, Hooks, HookEntry } from "../lib/schema";
+import { ExternalLink } from "./ExternalLink";
 
 const HOOK_TYPES: { value: keyof Hooks; label: string; description: string }[] = [
 	{ value: "PreToolUse", label: "Pre Tool Use", description: "Run before a tool executes" },
@@ -138,9 +139,9 @@ export function HooksSection({ settings, onChange }: HooksSectionProps) {
 		<Flex direction="column" gap="5">
 			<Text size="2" color="gray">
 				Configure custom commands that run before or after tool executions.{" "}
-				<Link href="https://docs.anthropic.com/en/docs/claude-code/hooks" target="_blank" rel="noopener noreferrer">
+				<ExternalLink href="https://code.claude.com/docs/en/hooks">
 					Learn more
-				</Link>
+				</ExternalLink>
 			</Text>
 
 			<Flex justify="between" align="center">

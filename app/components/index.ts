@@ -12,3 +12,4 @@ export { HooksSection } from "./HooksSection";
 export { EnvironmentSection } from "./EnvironmentSection";
 export { PluginsSection } from "./PluginsSection";
 export { AdvancedSection } from "./AdvancedSection";
+export { ExternalLink } from "./ExternalLink";

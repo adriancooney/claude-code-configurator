@@ -1,8 +1,9 @@
 "use client";
 
-import { Box, Flex, Link, Switch, Text } from "@radix-ui/themes";
+import { Box, Flex, Switch, Text } from "@radix-ui/themes";
 import type { Sandbox } from "../lib/schema";
 import { RuleList } from "./RuleList";
+import { ExternalLink } from "./ExternalLink";
 
 interface SandboxSectionProps {
 	sandbox: Sandbox;
@@ -15,9 +16,9 @@ export function SandboxSection({ sandbox, onChange }: SandboxSectionProps) {
 			<Text size="2" color="gray">
 				The sandbox runs bash commands in an isolated environment (macOS Seatbelt / Linux containers)
 				that restricts network access and filesystem writes outside the project directory.{" "}
-				<Link href="https://docs.anthropic.com/en/docs/claude-code/settings#sandbox-mode" target="_blank" rel="noopener noreferrer">
+				<ExternalLink href="https://code.claude.com/docs/en/settings#sandbox-mode">
 					Learn more
-				</Link>
+				</ExternalLink>
 			</Text>
 
 			<Flex justify="between" align="center">

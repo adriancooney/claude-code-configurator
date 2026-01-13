@@ -37,6 +37,7 @@ export const WEB_PACKS: WebPack[] = [
 			"typescriptlang.org",
 			"tailwindcss.com",
 			"prisma.io",
+			"ui.shadcn.com",
 		],
 	},
 	{

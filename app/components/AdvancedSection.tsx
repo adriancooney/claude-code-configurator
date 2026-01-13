@@ -4,6 +4,7 @@ import { Box, Flex, Heading, Link, Select, Separator, Switch, Text, TextField } 
 import { ChevronDownIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import type { ClaudeCodeSettings } from "../lib/schema";
+import { PluginsSection } from "./PluginsSection";
 
 const LOGIN_METHODS = [
 	{ value: "__none__", label: "No override" },
@@ -106,9 +107,9 @@ export function AdvancedSection({ settings, onChange }: AdvancedSectionProps) {
 						</Box>
 					)}
 
-					<Separator size="4" />
+					<Separator size="4" my="2" />
 
-					<Heading size="3" mb="3">
+					<Heading size="3">
 						Authentication
 					</Heading>
 
@@ -225,6 +226,14 @@ export function AdvancedSection({ settings, onChange }: AdvancedSectionProps) {
 							</Text>
 						</Box>
 					)}
+
+					<Separator size="4" my="2" />
+
+					<Heading size="3">
+						Plugins
+					</Heading>
+
+					<PluginsSection settings={settings} onChange={onChange} />
 				</Flex>
 			)}
 		</Box>

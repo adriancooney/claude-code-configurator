@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
 	Box,
 	Button,
@@ -8,7 +8,6 @@ import {
 	Dialog,
 	Flex,
 	Heading,
-	Link,
 	Section,
 	Separator,
 	Text,
@@ -23,9 +22,10 @@ import {
 	McpServersSection,
 	HooksSection,
 	EnvironmentSection,
-	PluginsSection,
 	AdvancedSection,
+	ExternalLink,
 } from "./components";
+import { Link } from "@radix-ui/themes";
 import { DEFAULT_SETTINGS, type ClaudeCodeSettings } from "./lib/schema";
 
 function encodeSettings(settings: ClaudeCodeSettings): string {
@@ -44,11 +44,74 @@ function decodeSettings(encoded: string): ClaudeCodeSettings | null {
 
 const STORAGE_KEY = "claude-code-configurator-settings";
 
+const MAX_HISTORY = 50;
+
 export default function Home() {
 	const [settings, setSettings] = useState<ClaudeCodeSettings>(DEFAULT_SETTINGS);
 	const [shareModalOpen, setShareModalOpen] = useState(false);
 	const [shareUrl, setShareUrl] = useState("");
 	const fileInputRef = useRef<HTMLInputElement>(null);
+
+	// Undo/redo history
+	const [history, setHistory] = useState<ClaudeCodeSettings[]>([]);
+	const [historyIndex, setHistoryIndex] = useState(-1);
+	const isUndoRedo = useRef(false);
+
+	const updateSettings = useCallback((newSettings: ClaudeCodeSettings) => {
+		if (isUndoRedo.current) {
+			isUndoRedo.current = false;
+			setSettings(newSettings);
+			return;
+		}
+
+		setHistory(prev => {
+			const newHistory = prev.slice(0, historyIndex + 1);
+			newHistory.push(settings);
+			if (newHistory.length > MAX_HISTORY) {
+				newHistory.shift();
+				return newHistory;
+			}
+			return newHistory;
+		});
+		setHistoryIndex(prev => Math.min(prev + 1, MAX_HISTORY - 1));
+		setSettings(newSettings);
+	}, [settings, historyIndex]);
+
+	const undo = useCallback(() => {
+		if (historyIndex >= 0) {
+			isUndoRedo.current = true;
+			const previousSettings = history[historyIndex];
+			setHistory(prev => [...prev, settings]);
+			setHistoryIndex(prev => prev - 1);
+			setSettings(previousSettings);
+		}
+	}, [history, historyIndex, settings]);
+
+	const redo = useCallback(() => {
+		if (historyIndex < history.length - 1) {
+			isUndoRedo.current = true;
+			const nextSettings = history[historyIndex + 1];
+			setHistoryIndex(prev => prev + 1);
+			setSettings(nextSettings);
+		}
+	}, [history, historyIndex]);
+
+	// Keyboard shortcuts for undo/redo
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if ((e.metaKey || e.ctrlKey) && e.key === "z") {
+				e.preventDefault();
+				if (e.shiftKey) {
+					redo();
+				} else {
+					undo();
+				}
+			}
+		};
+
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, [undo, redo]);
 
 	// Load from URL param or localStorage on mount
 	useEffect(() => {
@@ -93,7 +156,7 @@ export default function Home() {
 		reader.onload = (e) => {
 			try {
 				const imported = JSON.parse(e.target?.result as string);
-				setSettings({
+				updateSettings({
 					$schema: "https://json.schemastore.org/claude-code-settings.json",
 					...imported,
 				});
@@ -194,9 +257,9 @@ export default function Home() {
 						<Heading size="6">Claude Code Configurator</Heading>
 						<Text size="2" color="gray">
 							Visual configuration tool for{" "}
-							<Link href="https://docs.anthropic.com/en/docs/claude-code/settings" target="_blank" rel="noopener noreferrer">
-								settings.json
-							</Link>.
+							<ExternalLink href="https://code.claude.com/docs/en/settings">
+								<code>.claude/settings.json</code>
+							</ExternalLink>
 						</Text>
 					</Box>
 					<Flex gap="2">
@@ -233,7 +296,7 @@ export default function Home() {
 								<Heading size="3" mb="3">
 									General Settings
 								</Heading>
-								<GeneralSection settings={settings} onChange={setSettings} />
+								<GeneralSection settings={settings} onChange={updateSettings} />
 							</Section>
 
 							<Separator size="4" />
@@ -244,7 +307,7 @@ export default function Home() {
 								</Heading>
 								<PermissionsSection
 									permissions={settings.permissions || {}}
-									onChange={(permissions) => setSettings({ ...settings, permissions })}
+									onChange={(permissions) => updateSettings({ ...settings, permissions })}
 								/>
 							</Section>
 
@@ -256,7 +319,7 @@ export default function Home() {
 								</Heading>
 								<SandboxSection
 									sandbox={settings.sandbox || {}}
-									onChange={(sandbox) => setSettings({ ...settings, sandbox })}
+									onChange={(sandbox) => updateSettings({ ...settings, sandbox })}
 								/>
 							</Section>
 
@@ -266,7 +329,7 @@ export default function Home() {
 								<Heading size="3" mb="3">
 									MCP Servers
 								</Heading>
-								<McpServersSection settings={settings} onChange={setSettings} />
+								<McpServersSection settings={settings} onChange={updateSettings} />
 							</Section>
 
 							<Separator size="4" />
@@ -275,7 +338,7 @@ export default function Home() {
 								<Heading size="3" mb="3">
 									Hooks
 								</Heading>
-								<HooksSection settings={settings} onChange={setSettings} />
+								<HooksSection settings={settings} onChange={updateSettings} />
 							</Section>
 
 							<Separator size="4" />
@@ -284,32 +347,27 @@ export default function Home() {
 								<Heading size="3" mb="3">
 									Environment
 								</Heading>
-								<EnvironmentSection settings={settings} onChange={setSettings} />
+								<EnvironmentSection settings={settings} onChange={updateSettings} />
 							</Section>
 
 							<Separator size="4" />
 
 							<Section size="1">
-								<Heading size="3" mb="3">
-									Plugins
-								</Heading>
-								<PluginsSection settings={settings} onChange={setSettings} />
-							</Section>
-
-							<Separator size="4" />
-
-							<Section size="1">
-								<AdvancedSection settings={settings} onChange={setSettings} />
+								<AdvancedSection settings={settings} onChange={updateSettings} />
 							</Section>
 
 							<Box py="4">
 								<Text size="1" color="gray" align="center" as="p">
 									Created by{" "}
+									<Link href="https://claude.ai/code" target="_blank" rel="noopener noreferrer">
+										Claude Code
+									</Link>
+									{" & "}
 									<Link href="https://x.com/adrian_cooney" target="_blank" rel="noopener noreferrer">
 										Adrian Cooney
 									</Link>
 									{" "}&bull;{" "}
-									<Link href="https://github.com/adriancooney/claude-permissions-configurator" target="_blank" rel="noopener noreferrer">
+									<Link href="https://github.com/adriancooney/claude-code-configurator" target="_blank" rel="noopener noreferrer">
 										View source on GitHub
 									</Link>
 									{" "}&bull;{" "}
@@ -332,7 +390,7 @@ export default function Home() {
 						overflow: "auto",
 					}}
 				>
-					<JsonPreview settings={cleanSettings(settings)} onSettingsChange={setSettings} />
+					<JsonPreview settings={cleanSettings(settings)} onSettingsChange={updateSettings} />
 				</Box>
 			</Flex>
 

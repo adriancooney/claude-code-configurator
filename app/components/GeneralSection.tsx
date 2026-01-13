@@ -1,8 +1,9 @@
 "use client";
 
-import { Box, Flex, Link, Select, Switch, Text, TextField } from "@radix-ui/themes";
+import { Box, Flex, Select, Switch, Text, TextField } from "@radix-ui/themes";
 import { useState } from "react";
 import type { ClaudeCodeSettings } from "../lib/schema";
+import { ExternalLink } from "./ExternalLink";
 
 const MODELS = [
 	{ value: "__default__", label: "Default (no override)", token: null },
@@ -59,6 +60,10 @@ export function GeneralSection({ settings, onChange }: GeneralSectionProps) {
 
 	return (
 		<Flex direction="column" gap="5">
+			<Text size="2" color="gray">
+				Configure model, output style, and general behavior.
+			</Text>
+
 			<Box>
 				<Text as="label" size="2" weight="medium" mb="1" style={{ display: "block" }}>
 					Model Override
@@ -87,9 +92,9 @@ export function GeneralSection({ settings, onChange }: GeneralSectionProps) {
 				</Flex>
 				<Text size="1" color="gray" mt="1">
 					Override the default AI model used by Claude Code.{" "}
-					<Link href="https://platform.claude.com/docs/en/about-claude/models/overview" target="_blank" rel="noopener noreferrer">
+					<ExternalLink href="https://platform.claude.com/docs/en/about-claude/models/overview">
 						View available models
-					</Link>
+					</ExternalLink>
 				</Text>
 			</Box>
 
@@ -172,9 +177,9 @@ export function GeneralSection({ settings, onChange }: GeneralSectionProps) {
 				</Flex>
 				<Text size="1" color="gray" mt="1">
 					Controls the style of Claude's responses.{" "}
-					<Link href="https://code.claude.com/docs/en/output-styles" target="_blank" rel="noopener noreferrer">
+					<ExternalLink href="https://code.claude.com/docs/en/output-styles">
 						Learn more
-					</Link>
+					</ExternalLink>
 				</Text>
 			</Box>
 
@@ -197,9 +202,9 @@ export function GeneralSection({ settings, onChange }: GeneralSectionProps) {
 				/>
 				<Text size="1" color="gray" mt="1">
 					Custom command to display in the status line.{" "}
-					<Link href="https://docs.anthropic.com/en/docs/claude-code/statusline" target="_blank" rel="noopener noreferrer">
+					<ExternalLink href="https://code.claude.com/docs/en/statusline">
 						Learn more
-					</Link>
+					</ExternalLink>
 				</Text>
 			</Box>
 

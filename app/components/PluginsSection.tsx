@@ -88,10 +88,6 @@ interface PluginsSectionProps {
 export function PluginsSection({ settings, onChange }: PluginsSectionProps) {
 	return (
 		<Flex direction="column" gap="5">
-			<Text size="2" color="gray">
-				Configure plugin availability and marketplace preferences.
-			</Text>
-
 			<PluginToggleEditor
 				plugins={settings.enabledPlugins || {}}
 				onChange={(enabledPlugins) =>

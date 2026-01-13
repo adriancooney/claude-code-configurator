@@ -1,8 +1,9 @@
 "use client";
 
-import { Flex, Link, Switch, Text } from "@radix-ui/themes";
+import { Flex, Switch, Text } from "@radix-ui/themes";
 import type { ClaudeCodeSettings } from "../lib/schema";
 import { StringListEditor } from "./StringListEditor";
+import { ExternalLink } from "./ExternalLink";
 
 interface McpServersSectionProps {
 	settings: ClaudeCodeSettings;
@@ -14,9 +15,9 @@ export function McpServersSection({ settings, onChange }: McpServersSectionProps
 		<Flex direction="column" gap="5">
 			<Text size="2" color="gray">
 				Configure which MCP (Model Context Protocol) servers Claude Code can connect to.{" "}
-				<Link href="https://docs.anthropic.com/en/docs/claude-code/mcp" target="_blank" rel="noopener noreferrer">
+				<ExternalLink href="https://code.claude.com/docs/en/mcp">
 					Learn more
-				</Link>
+				</ExternalLink>
 			</Text>
 
 			<Flex justify="between" align="center">
