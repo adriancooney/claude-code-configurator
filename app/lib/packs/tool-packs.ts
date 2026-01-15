@@ -371,4 +371,19 @@ export const TOOL_PACKS: ToolPack[] = [
 			"Bash(aws secretsmanager:*)",
 		],
 	},
+	{
+		id: "beads",
+		name: "Beads",
+		description: "Git-backed graph issue tracker for AI agents",
+		readOnly: [
+			"Bash(bd ready:*)",
+			"Bash(bd show:*)",
+			"Bash(bd list:*)",
+			"Bash(bd status:*)",
+			"Bash(bd dep list:*)",
+		],
+		readWrite: [
+			"Bash(bd:*)",
+		],
+	},
 ];
