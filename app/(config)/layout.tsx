@@ -64,7 +64,7 @@ function ConfigLayoutInner({ children }: { children: React.ReactNode }) {
 
 			<Flex style={{ background: "var(--gray-2)", borderBottom: "1px solid var(--gray-5)", paddingLeft: "var(--space-6)", gap: "var(--space-1)" }}>
 				<TabLink href="/settings.json">settings.json</TabLink>
-				<TabLink href="/claude.md">CLAUDE.md</TabLink>
+				<TabLink href="/env">Environment Variables</TabLink>
 			</Flex>
 
 			<Box style={{ flex: 1, overflow: "hidden" }}>
