@@ -6,7 +6,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Claude Code Configurator",
-  description: "Visual configuration tool for Claude Code settings.json",
+  description: "Visual configuration tool for Claude Code settings.json and environment variables",
 };
 
 export default function RootLayout({

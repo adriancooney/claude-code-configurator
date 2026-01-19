@@ -421,4 +421,22 @@ export const TOOL_PACKS: ToolPack[] = [
 			"Bash(bd:*)",
 		],
 	},
+	{
+		id: "agent-browser",
+		name: "Agent Browser",
+		description: "Headless browser automation CLI for AI agents (github.com/vercel-labs/agent-browser)",
+		readOnly: [
+			"Bash(agent-browser get:*)",
+			"Bash(agent-browser is:*)",
+			"Bash(agent-browser find:*)",
+			"Bash(agent-browser cookies:*)",
+			"Bash(agent-browser storage:*)",
+			"Bash(agent-browser console:*)",
+			"Bash(agent-browser errors:*)",
+			"Bash(agent-browser session list:*)",
+		],
+		readWrite: [
+			"Bash(agent-browser:*)",
+		],
+	},
 ];
