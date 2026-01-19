@@ -15,11 +15,41 @@ import {
 	Tooltip,
 } from "@radix-ui/themes";
 import { MagnifyingGlassIcon, CheckCircledIcon, QuestionMarkCircledIcon } from "@radix-ui/react-icons";
-import { ENV_VAR_CATEGORIES, type EnvVar } from "../../lib/env-vars";
+import { ENV_VAR_CATEGORIES, type EnvVar, type EnvVarValueType } from "../../lib/env-vars";
+
+function formatValueType(valueType: EnvVarValueType | undefined): string | null {
+	if (!valueType) return null;
+	switch (valueType.type) {
+		case "boolean":
+			return "0 | 1";
+		case "integer":
+			if (valueType.min !== undefined && valueType.max !== undefined) {
+				return `integer (${valueType.min}-${valueType.max})`;
+			}
+			if (valueType.default !== undefined) {
+				return `integer (default: ${valueType.default})`;
+			}
+			return "integer";
+		case "duration_ms":
+			if (valueType.default !== undefined) {
+				return `ms (default: ${valueType.default})`;
+			}
+			return "ms";
+		case "enum":
+			return valueType.values.join(" | ");
+		case "path":
+			return "file path";
+		case "url":
+			return "URL";
+		case "string":
+			return null;
+	}
+}
 
 type DocFilter = "all" | "documented" | "undocumented";
 
 function EnvVarRow({ envVar, isLast }: { envVar: EnvVar; isLast: boolean }) {
+	const valueTypeStr = formatValueType(envVar.valueType);
 	return (
 		<Box
 			py="2"
@@ -28,6 +58,7 @@ function EnvVarRow({ envVar, isLast }: { envVar: EnvVar; isLast: boolean }) {
 			<Flex gap="2" align="center" mb="1">
 				<Text size="2" weight="medium" style={{ fontFamily: "monospace" }}>
 					{envVar.name}
+					{valueTypeStr && <span style={{ color: "var(--gray-9)", fontWeight: 400 }}>=&lt;{valueTypeStr}&gt;</span>}
 				</Text>
 				{envVar.documented ? (
 					<Tooltip content="Documented in official Claude Code docs">
