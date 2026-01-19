@@ -16,13 +16,15 @@ import {
 import { MagnifyingGlassIcon, CheckCircledIcon, QuestionMarkCircledIcon } from "@radix-ui/react-icons";
 import { ENV_VAR_CATEGORIES, type EnvVar } from "../../lib/env-vars";
 
-function EnvVarRow({ envVar }: { envVar: EnvVar }) {
+type DocFilter = "all" | "documented" | "undocumented";
+
+function EnvVarRow({ envVar, isLast }: { envVar: EnvVar; isLast: boolean }) {
 	return (
 		<Flex
 			justify="between"
 			align="start"
 			py="2"
-			style={{ borderBottom: "1px solid var(--gray-4)" }}
+			style={isLast ? undefined : { borderBottom: "1px solid var(--gray-4)" }}
 		>
 			<Box style={{ flex: 1 }}>
 				<Flex gap="2" align="center" mb="1">
@@ -52,29 +54,29 @@ function EnvVarRow({ envVar }: { envVar: EnvVar }) {
 	);
 }
 
-function CategoryCard({ category, searchQuery }: { category: typeof ENV_VAR_CATEGORIES[0]; searchQuery: string }) {
-	const filteredVars = category.vars.filter(
-		(v) =>
+function CategoryCard({ category, searchQuery, docFilter }: { category: typeof ENV_VAR_CATEGORIES[0]; searchQuery: string; docFilter: DocFilter }) {
+	const filteredVars = category.vars.filter((v) => {
+		const matchesSearch =
 			v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			v.description.toLowerCase().includes(searchQuery.toLowerCase())
-	);
+			v.description.toLowerCase().includes(searchQuery.toLowerCase());
+		const matchesDocFilter =
+			docFilter === "all" ||
+			(docFilter === "documented" && v.documented) ||
+			(docFilter === "undocumented" && !v.documented);
+		return matchesSearch && matchesDocFilter;
+	});
 
 	if (filteredVars.length === 0) return null;
 
 	return (
 		<Card mb="4">
-			<Flex justify="between" align="center" mb="2">
-				<Heading size="3">{category.name}</Heading>
-				<Badge color="gray" variant="soft">
-					{filteredVars.length} {filteredVars.length === 1 ? "variable" : "variables"}
-				</Badge>
-			</Flex>
-			<Text size="2" color="gray" mb="3">
+			<Heading size="3">{category.name}</Heading>
+			<Text size="2" color="gray">
 				{category.description}
 			</Text>
-			<Box>
-				{filteredVars.map((envVar) => (
-					<EnvVarRow key={envVar.name} envVar={envVar} />
+			<Box mt="2">
+				{filteredVars.map((envVar, index) => (
+					<EnvVarRow key={envVar.name} envVar={envVar} isLast={index === filteredVars.length - 1} />
 				))}
 			</Box>
 		</Card>
@@ -83,6 +85,7 @@ function CategoryCard({ category, searchQuery }: { category: typeof ENV_VAR_CATE
 
 export default function EnvPage() {
 	const [searchQuery, setSearchQuery] = useState("");
+	const [docFilter, setDocFilter] = useState<DocFilter>("all");
 
 	const totalVars = ENV_VAR_CATEGORIES.reduce((sum, cat) => sum + cat.vars.length, 0);
 	const documentedVars = ENV_VAR_CATEGORIES.reduce(
@@ -92,12 +95,21 @@ export default function EnvPage() {
 	const undocumentedVars = totalVars - documentedVars;
 
 	const filteredCategories = ENV_VAR_CATEGORIES.filter((cat) =>
-		cat.vars.some(
-			(v) =>
+		cat.vars.some((v) => {
+			const matchesSearch =
 				v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				v.description.toLowerCase().includes(searchQuery.toLowerCase())
-		)
+				v.description.toLowerCase().includes(searchQuery.toLowerCase());
+			const matchesDocFilter =
+				docFilter === "all" ||
+				(docFilter === "documented" && v.documented) ||
+				(docFilter === "undocumented" && !v.documented);
+			return matchesSearch && matchesDocFilter;
+		})
 	);
+
+	const toggleFilter = (filter: DocFilter) => {
+		setDocFilter(docFilter === filter ? "all" : filter);
+	};
 
 	return (
 		<ScrollArea style={{ height: "100%" }}>
@@ -117,15 +129,33 @@ export default function EnvPage() {
 						<Badge size="2" color="gray" variant="soft">
 							{totalVars} total variables
 						</Badge>
-						<Flex align="center" gap="1">
+						<Flex
+							align="center"
+							gap="1"
+							onClick={() => toggleFilter("documented")}
+							style={{ cursor: "pointer" }}
+						>
 							<CheckCircledIcon color="var(--green-9)" />
-							<Badge size="2" color="green" variant="soft">
+							<Badge
+								size="2"
+								color="green"
+								variant={docFilter === "documented" ? "solid" : "soft"}
+							>
 								{documentedVars} documented
 							</Badge>
 						</Flex>
-						<Flex align="center" gap="1">
+						<Flex
+							align="center"
+							gap="1"
+							onClick={() => toggleFilter("undocumented")}
+							style={{ cursor: "pointer" }}
+						>
 							<QuestionMarkCircledIcon color="var(--amber-9)" />
-							<Badge size="2" color="amber" variant="soft">
+							<Badge
+								size="2"
+								color="amber"
+								variant={docFilter === "undocumented" ? "solid" : "soft"}
+							>
 								{undocumentedVars} undocumented
 							</Badge>
 						</Flex>
@@ -146,7 +176,7 @@ export default function EnvPage() {
 						{filteredCategories.length === 0 ? (
 							<Box py="6">
 								<Text color="gray" align="center" as="p">
-									No environment variables found matching &quot;{searchQuery}&quot;
+									No environment variables found matching your criteria
 								</Text>
 							</Box>
 						) : (
@@ -155,6 +185,7 @@ export default function EnvPage() {
 									key={category.id}
 									category={category}
 									searchQuery={searchQuery}
+									docFilter={docFilter}
 								/>
 							))
 						)}
