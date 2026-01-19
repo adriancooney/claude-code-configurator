@@ -280,6 +280,24 @@ export default function Home() {
 					>
 						<Container size="2">
 							<Flex direction="column" gap="5">
+							<Flex justify="end" gap="2">
+								<input
+									ref={fileInputRef}
+									type="file"
+									accept=".json"
+									onChange={handleImport}
+									style={{ display: "none" }}
+								/>
+								<Button variant="soft" size="1" onClick={() => fileInputRef.current?.click()}>
+									<UploadIcon />
+									Import
+								</Button>
+								<Button variant="soft" size="1" onClick={handleShare}>
+									<Share1Icon />
+									Share
+								</Button>
+							</Flex>
+
 							<Section size="1">
 								<Heading size="3" mb="3">
 									General Settings
@@ -378,26 +396,6 @@ export default function Home() {
 							overflow: "auto",
 						}}
 					>
-						<Flex justify="between" align="center" mb="4">
-							<Heading size="4">settings.json</Heading>
-							<Flex gap="2">
-								<input
-									ref={fileInputRef}
-									type="file"
-									accept=".json"
-									onChange={handleImport}
-									style={{ display: "none" }}
-								/>
-								<Button variant="soft" size="1" onClick={() => fileInputRef.current?.click()}>
-									<UploadIcon />
-									Import
-								</Button>
-								<Button variant="soft" size="1" onClick={handleShare}>
-									<Share1Icon />
-									Share
-								</Button>
-							</Flex>
-						</Flex>
 						<JsonPreview settings={cleanSettings(settings)} onSettingsChange={updateSettings} />
 					</Box>
 				</Flex>
