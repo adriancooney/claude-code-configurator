@@ -20,37 +20,33 @@ type DocFilter = "all" | "documented" | "undocumented";
 
 function EnvVarRow({ envVar, isLast }: { envVar: EnvVar; isLast: boolean }) {
 	return (
-		<Flex
-			justify="between"
-			align="start"
+		<Box
 			py="2"
-			style={isLast ? undefined : { borderBottom: "1px solid var(--gray-4)" }}
+			style={isLast ? { paddingBottom: 0 } : { borderBottom: "1px solid var(--gray-4)" }}
 		>
-			<Box style={{ flex: 1 }}>
-				<Flex gap="2" align="center" mb="1">
-					<Text size="2" weight="medium" style={{ fontFamily: "monospace" }}>
-						{envVar.name}
-					</Text>
-					{envVar.documented ? (
-						<Tooltip content="Documented in official Claude Code docs">
-							<CheckCircledIcon color="var(--green-9)" style={{ cursor: "help" }} />
-						</Tooltip>
-					) : (
-						<Tooltip content="Undocumented - found in source code">
-							<QuestionMarkCircledIcon color="var(--amber-9)" style={{ cursor: "help" }} />
-						</Tooltip>
-					)}
-				</Flex>
-				<Text size="1" color="gray">
-					{envVar.description}
+			<Flex gap="2" align="center" mb="1">
+				<Text size="2" weight="medium" style={{ fontFamily: "monospace" }}>
+					{envVar.name}
 				</Text>
-				{envVar.example && (
-					<Text size="1" color="gray" style={{ fontFamily: "monospace" }}>
-						Example: {envVar.example}
-					</Text>
+				{envVar.documented ? (
+					<Tooltip content="Documented in official Claude Code docs">
+						<CheckCircledIcon color="var(--green-9)" style={{ cursor: "help" }} />
+					</Tooltip>
+				) : (
+					<Tooltip content="Undocumented - found in source code">
+						<QuestionMarkCircledIcon color="var(--amber-9)" style={{ cursor: "help" }} />
+					</Tooltip>
 				)}
-			</Box>
-		</Flex>
+			</Flex>
+			<Text size="1" color="gray" as="p" style={{ margin: 0 }}>
+				{envVar.description}
+			</Text>
+			{envVar.example && (
+				<Text size="1" color="gray" as="p" style={{ fontFamily: "monospace", margin: 0, marginTop: 2 }}>
+					e.g. <code>{envVar.example}</code>
+				</Text>
+			)}
+		</Box>
 	);
 }
 
