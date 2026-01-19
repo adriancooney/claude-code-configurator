@@ -14,7 +14,7 @@ import {
 	TextField,
 	Tooltip,
 } from "@radix-ui/themes";
-import { MagnifyingGlassIcon, CheckCircledIcon, QuestionMarkCircledIcon } from "@radix-ui/react-icons";
+import { MagnifyingGlassIcon, CheckCircledIcon, QuestionMarkCircledIcon, CopyIcon } from "@radix-ui/react-icons";
 import { ENV_VAR_CATEGORIES, type EnvVar, type EnvVarValueType } from "../../lib/env-vars";
 
 function formatValueType(valueType: EnvVarValueType | undefined): string | null {
@@ -50,6 +50,11 @@ type DocFilter = "all" | "documented" | "undocumented";
 
 function EnvVarRow({ envVar, isLast, isHighlighted }: { envVar: EnvVar; isLast: boolean; isHighlighted: boolean }) {
 	const valueTypeStr = formatValueType(envVar.valueType);
+
+	const handleCopy = () => {
+		navigator.clipboard.writeText(envVar.name);
+	};
+
 	return (
 		<Box
 			id={envVar.name}
@@ -64,26 +69,35 @@ function EnvVarRow({ envVar, isLast, isHighlighted }: { envVar: EnvVar; isLast: 
 				} : {}),
 			}}
 		>
-			<Flex gap="2" align="center" mb="1">
-				<Text size="2" weight="medium" style={{ fontFamily: "monospace" }}>
-					<a
-						href={`#${envVar.name}`}
-						style={{ color: "inherit", textDecoration: "none" }}
-					>
-						{envVar.name}
-					</a>
-					{valueTypeStr && <span style={{ color: "var(--gray-9)", fontWeight: 400 }}>=&lt;{valueTypeStr}&gt;</span>}
-				</Text>
+			<Text size="2" weight="medium" mb="1" as="div" style={{ fontFamily: "monospace", lineHeight: 1.6 }}>
+				<a
+					href={`#${envVar.name}`}
+					style={{ color: "inherit", textDecoration: "none" }}
+					onMouseEnter={(e) => e.currentTarget.style.textDecoration = "underline"}
+					onMouseLeave={(e) => e.currentTarget.style.textDecoration = "none"}
+				>
+					{envVar.name}
+				</a>
+				{valueTypeStr && <span style={{ color: "var(--gray-9)", fontWeight: 400 }}>=&lt;{valueTypeStr}&gt;</span>}
+				{" "}
+				<Tooltip content="Copy environment variable name">
+					<CopyIcon
+						color="var(--gray-9)"
+						style={{ cursor: "pointer", verticalAlign: "middle", display: "inline" }}
+						onClick={handleCopy}
+					/>
+				</Tooltip>
+				{" "}
 				{envVar.documented ? (
 					<Tooltip content="Documented in official Claude Code docs">
-						<CheckCircledIcon color="var(--green-9)" style={{ cursor: "help" }} />
+						<CheckCircledIcon color="var(--green-9)" style={{ cursor: "help", verticalAlign: "middle", display: "inline" }} />
 					</Tooltip>
 				) : (
 					<Tooltip content="Undocumented - found in source code">
-						<QuestionMarkCircledIcon color="var(--amber-9)" style={{ cursor: "help" }} />
+						<QuestionMarkCircledIcon color="var(--amber-9)" style={{ cursor: "help", verticalAlign: "middle", display: "inline" }} />
 					</Tooltip>
 				)}
-			</Flex>
+			</Text>
 			<Text size="1" color="gray" as="p" style={{ margin: 0 }}>
 				{envVar.description}
 			</Text>
