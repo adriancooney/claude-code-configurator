@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { AlertDialog, Box, Button, Flex, Text, Tooltip } from "@radix-ui/themes";
-import { CheckCircledIcon, CheckIcon, ClipboardIcon, CopyIcon, CrossCircledIcon, DownloadIcon, ResetIcon } from "@radix-ui/react-icons";
+import { CheckCircledIcon, CheckIcon, ClipboardIcon, CopyIcon, CrossCircledIcon, DownloadIcon, UploadIcon } from "@radix-ui/react-icons";
 import type { ClaudeCodeSettings } from "../lib/schema";
 import { DEFAULT_SETTINGS } from "../lib/schema";
 import { validateSettings, type ValidationResult } from "../lib/validate";
@@ -18,8 +18,10 @@ export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 	const [isValidating, setIsValidating] = useState(false);
 	const [pasteDialogOpen, setPasteDialogOpen] = useState(false);
 	const [clipboardContent, setClipboardContent] = useState("");
-	const [resetDialogOpen, setResetDialogOpen] = useState(false);
 	const [copyState, setCopyState] = useState<"idle" | "copied">("idle");
+	const [importDialogOpen, setImportDialogOpen] = useState(false);
+	const [importContent, setImportContent] = useState("");
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -73,6 +75,33 @@ export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 		}
 	};
 
+	const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const file = event.target.files?.[0];
+		if (!file) return;
+
+		const reader = new FileReader();
+		reader.onload = (e) => {
+			const content = e.target?.result as string;
+			setImportContent(content);
+			setImportDialogOpen(true);
+		};
+		reader.readAsText(file);
+		event.target.value = "";
+	};
+
+	const confirmImport = () => {
+		try {
+			const parsed = JSON.parse(importContent);
+			onSettingsChange({
+				$schema: "https://json.schemastore.org/claude-code-settings.json",
+				...parsed,
+			});
+			setImportDialogOpen(false);
+		} catch {
+			alert("Invalid JSON file. Please ensure the file contains valid JSON settings.");
+		}
+	};
+
 	return (
 		<Flex direction="column" gap="3" style={{ height: "100%" }}>
 			<Flex justify="between" align="center">
@@ -105,9 +134,16 @@ export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 						<DownloadIcon />
 						Download
 					</Button>
-					<Button size="1" variant="soft" color="red" onClick={() => setResetDialogOpen(true)}>
-						<ResetIcon />
-						Reset
+					<input
+						ref={fileInputRef}
+						type="file"
+						accept=".json"
+						onChange={handleFileSelect}
+						style={{ display: "none" }}
+					/>
+					<Button size="1" variant="soft" onClick={() => fileInputRef.current?.click()}>
+						<UploadIcon />
+						Import
 					</Button>
 				</Flex>
 			</Flex>
@@ -189,12 +225,27 @@ export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 				</AlertDialog.Content>
 			</AlertDialog.Root>
 
-			<AlertDialog.Root open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
-				<AlertDialog.Content maxWidth="400px">
-					<AlertDialog.Title>Reset Settings</AlertDialog.Title>
+			<AlertDialog.Root open={importDialogOpen} onOpenChange={setImportDialogOpen}>
+				<AlertDialog.Content maxWidth="500px">
+					<AlertDialog.Title>Import Settings</AlertDialog.Title>
 					<AlertDialog.Description size="2">
-						This will reset all settings to their defaults.
+						This will replace your current settings with the imported file.
 					</AlertDialog.Description>
+					<Box
+						mt="3"
+						style={{
+							maxHeight: "200px",
+							overflow: "auto",
+							background: "var(--gray-2)",
+							borderRadius: "var(--radius-2)",
+							padding: "var(--space-2)",
+							fontFamily: "monospace",
+							fontSize: "12px",
+							whiteSpace: "pre",
+						}}
+					>
+						{importContent}
+					</Box>
 					<Flex gap="3" mt="4" justify="end">
 						<AlertDialog.Cancel>
 							<Button variant="soft" color="gray">
@@ -202,8 +253,8 @@ export function JsonPreview({ settings, onSettingsChange }: JsonPreviewProps) {
 							</Button>
 						</AlertDialog.Cancel>
 						<AlertDialog.Action>
-							<Button variant="solid" color="red" onClick={() => onSettingsChange(DEFAULT_SETTINGS)}>
-								Reset Settings
+							<Button variant="solid" color="red" onClick={confirmImport}>
+								Import Settings
 							</Button>
 						</AlertDialog.Action>
 					</Flex>

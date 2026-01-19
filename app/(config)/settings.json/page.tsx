@@ -1,7 +1,9 @@
 "use client";
 
 import {
+	AlertDialog,
 	Box,
+	Button,
 	Container,
 	Flex,
 	Heading,
@@ -10,6 +12,8 @@ import {
 	Text,
 } from "@radix-ui/themes";
 import { Link } from "@radix-ui/themes";
+import { ResetIcon, Share1Icon } from "@radix-ui/react-icons";
+import { useState } from "react";
 import {
 	JsonPreview,
 	PermissionsSection,
@@ -21,9 +25,11 @@ import {
 	AdvancedSection,
 } from "../../components";
 import { useSettings, cleanSettings } from "../../lib/settings-context";
+import { DEFAULT_SETTINGS } from "../../lib/schema";
 
 export default function SettingsJsonPage() {
-	const { settings, updateSettings } = useSettings();
+	const { settings, updateSettings, handleShare } = useSettings();
+	const [resetDialogOpen, setResetDialogOpen] = useState(false);
 
 	return (
 		<Flex style={{ flex: 1, overflow: "hidden", height: "100%" }}>
@@ -36,6 +42,17 @@ export default function SettingsJsonPage() {
 			>
 				<Container size="2">
 					<Flex direction="column" gap="5">
+						<Flex justify="end" gap="2">
+							<Button variant="soft" size="1" color="red" onClick={() => setResetDialogOpen(true)}>
+								<ResetIcon />
+								Reset
+							</Button>
+							<Button variant="soft" size="1" onClick={handleShare}>
+								<Share1Icon />
+								Share
+							</Button>
+						</Flex>
+
 						<Section size="1">
 							<Heading size="3" mb="3">
 								General Settings
@@ -136,6 +153,27 @@ export default function SettingsJsonPage() {
 			>
 				<JsonPreview settings={cleanSettings(settings)} onSettingsChange={updateSettings} />
 			</Box>
+
+			<AlertDialog.Root open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+				<AlertDialog.Content maxWidth="400px">
+					<AlertDialog.Title>Reset Settings</AlertDialog.Title>
+					<AlertDialog.Description size="2">
+						This will reset all settings to their defaults.
+					</AlertDialog.Description>
+					<Flex gap="3" mt="4" justify="end">
+						<AlertDialog.Cancel>
+							<Button variant="soft" color="gray">
+								Cancel
+							</Button>
+						</AlertDialog.Cancel>
+						<AlertDialog.Action>
+							<Button variant="solid" color="red" onClick={() => updateSettings(DEFAULT_SETTINGS)}>
+								Reset Settings
+							</Button>
+						</AlertDialog.Action>
+					</Flex>
+				</AlertDialog.Content>
+			</AlertDialog.Root>
 		</Flex>
 	);
 }

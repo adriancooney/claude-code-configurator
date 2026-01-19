@@ -11,7 +11,7 @@ import {
 	Text,
 	TextField,
 } from "@radix-ui/themes";
-import { CopyIcon, Share1Icon, UploadIcon } from "@radix-ui/react-icons";
+import { CopyIcon } from "@radix-ui/react-icons";
 import { SettingsProvider, useSettings } from "../lib/settings-context";
 
 function TabLink({ href, children }: { href: string; children: React.ReactNode }) {
@@ -38,13 +38,10 @@ function TabLink({ href, children }: { href: string; children: React.ReactNode }
 
 function ConfigLayoutInner({ children }: { children: React.ReactNode }) {
 	const {
-		handleImport,
-		handleShare,
 		shareModalOpen,
 		setShareModalOpen,
 		shareUrl,
 		handleCopyShareUrl,
-		fileInputRef,
 	} = useSettings();
 
 	return (
@@ -57,31 +54,12 @@ function ConfigLayoutInner({ children }: { children: React.ReactNode }) {
 					flexShrink: 0,
 				}}
 			>
-				<Flex justify="between" align="center">
-					<Box>
-						<Heading size="6">Claude Code Configurator</Heading>
-						<Text size="2" color="gray">
-							Visual configuration tool for Claude
-						</Text>
-					</Box>
-					<Flex gap="2">
-						<input
-							ref={fileInputRef}
-							type="file"
-							accept=".json"
-							onChange={handleImport}
-							style={{ display: "none" }}
-						/>
-						<Button variant="soft" onClick={() => fileInputRef.current?.click()}>
-							<UploadIcon />
-							Import
-						</Button>
-						<Button variant="soft" onClick={handleShare}>
-							<Share1Icon />
-							Share
-						</Button>
-					</Flex>
-				</Flex>
+				<Box>
+					<Heading size="6">Claude Code Configurator</Heading>
+					<Text size="2" color="gray">
+						Visual configuration tool for Claude
+					</Text>
+				</Box>
 			</Box>
 
 			<Flex style={{ background: "var(--gray-2)", borderBottom: "1px solid var(--gray-5)", paddingLeft: "var(--space-6)", gap: "var(--space-1)" }}>
