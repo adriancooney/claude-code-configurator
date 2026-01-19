@@ -10,6 +10,7 @@ import {
 	Heading,
 	Section,
 	Separator,
+	Tabs,
 	Text,
 	TextField,
 } from "@radix-ui/themes";
@@ -256,42 +257,29 @@ export default function Home() {
 					<Box>
 						<Heading size="6">Claude Code Configurator</Heading>
 						<Text size="2" color="gray">
-							Visual configuration tool for{" "}
-							<ExternalLink href="https://code.claude.com/docs/en/settings">
-								<code>.claude/settings.json</code>
-							</ExternalLink>
+							Visual configuration tool for Claude
 						</Text>
 					</Box>
-					<Flex gap="2">
-						<input
-							ref={fileInputRef}
-							type="file"
-							accept=".json"
-							onChange={handleImport}
-							style={{ display: "none" }}
-						/>
-						<Button variant="soft" onClick={() => fileInputRef.current?.click()}>
-							<UploadIcon />
-							Import
-						</Button>
-						<Button variant="soft" onClick={handleShare}>
-							<Share1Icon />
-							Share
-						</Button>
-					</Flex>
 				</Flex>
 			</Box>
 
-			<Flex style={{ flex: 1, overflow: "hidden" }}>
-				<Box
-					style={{
-						flex: 1,
-						overflow: "auto",
-						padding: "var(--space-6)",
-					}}
-				>
-					<Container size="2">
-						<Flex direction="column" gap="5">
+			<Tabs.Root defaultValue="settings" style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden" }}>
+				<Tabs.List style={{ background: "var(--gray-2)", borderBottom: "1px solid var(--gray-5)", paddingLeft: "var(--space-6)" }}>
+					<Tabs.Trigger value="settings">settings.json</Tabs.Trigger>
+					<Tabs.Trigger value="claude-md">CLAUDE.md</Tabs.Trigger>
+				</Tabs.List>
+
+			<Tabs.Content value="settings" style={{ flex: 1, overflow: "hidden", display: "flex" }}>
+				<Flex style={{ flex: 1, overflow: "hidden" }}>
+					<Box
+						style={{
+							flex: 1,
+							overflow: "auto",
+							padding: "var(--space-6)",
+						}}
+					>
+						<Container size="2">
+							<Flex direction="column" gap="5">
 							<Section size="1">
 								<Heading size="3" mb="3">
 									General Settings
@@ -381,18 +369,44 @@ export default function Home() {
 					</Container>
 				</Box>
 
-				<Box
-					style={{
-						width: 540,
-						borderLeft: "1px solid var(--gray-5)",
-						padding: "var(--space-6)",
-						background: "var(--gray-2)",
-						overflow: "auto",
-					}}
-				>
-					<JsonPreview settings={cleanSettings(settings)} onSettingsChange={updateSettings} />
-				</Box>
-			</Flex>
+					<Box
+						style={{
+							width: 540,
+							borderLeft: "1px solid var(--gray-5)",
+							padding: "var(--space-6)",
+							background: "var(--gray-2)",
+							overflow: "auto",
+						}}
+					>
+						<Flex justify="between" align="center" mb="4">
+							<Heading size="4">settings.json</Heading>
+							<Flex gap="2">
+								<input
+									ref={fileInputRef}
+									type="file"
+									accept=".json"
+									onChange={handleImport}
+									style={{ display: "none" }}
+								/>
+								<Button variant="soft" size="1" onClick={() => fileInputRef.current?.click()}>
+									<UploadIcon />
+									Import
+								</Button>
+								<Button variant="soft" size="1" onClick={handleShare}>
+									<Share1Icon />
+									Share
+								</Button>
+							</Flex>
+						</Flex>
+						<JsonPreview settings={cleanSettings(settings)} onSettingsChange={updateSettings} />
+					</Box>
+				</Flex>
+			</Tabs.Content>
+
+			<Tabs.Content value="claude-md" style={{ flex: 1, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+				<Text color="gray">CLAUDE.md editor coming soon</Text>
+			</Tabs.Content>
+			</Tabs.Root>
 
 			<Dialog.Root open={shareModalOpen} onOpenChange={setShareModalOpen}>
 				<Dialog.Content maxWidth="500px">
