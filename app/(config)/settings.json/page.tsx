@@ -42,21 +42,20 @@ export default function SettingsJsonPage() {
 			>
 				<Container size="2">
 					<Flex direction="column" gap="5">
-						<Flex justify="end" gap="2">
-							<Button variant="soft" size="1" color="red" onClick={() => setResetDialogOpen(true)}>
-								<ResetIcon />
-								Reset
-							</Button>
-							<Button variant="soft" size="1" onClick={handleShare}>
-								<Share1Icon />
-								Share
-							</Button>
-						</Flex>
-
 						<Section size="1">
-							<Heading size="3" mb="3">
-								General Settings
-							</Heading>
+							<Flex justify="between" align="center" mb="3">
+								<Heading size="3">General Settings</Heading>
+								<Flex gap="2">
+									<Button variant="soft" color="red" onClick={() => setResetDialogOpen(true)}>
+										<ResetIcon />
+										Reset
+									</Button>
+									<Button variant="soft" onClick={handleShare}>
+										<Share1Icon />
+										Share
+									</Button>
+								</Flex>
+							</Flex>
 							<GeneralSection settings={settings} onChange={updateSettings} />
 						</Section>
 
