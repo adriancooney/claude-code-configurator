@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useCallback } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import {
 	Badge,
 	Box,
@@ -79,9 +80,36 @@ function CategoryCard({ category, searchQuery, docFilter }: { category: typeof E
 	);
 }
 
-export default function EnvPage() {
-	const [searchQuery, setSearchQuery] = useState("");
-	const [docFilter, setDocFilter] = useState<DocFilter>("all");
+function EnvPageContent() {
+	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
+
+	const searchQuery = searchParams.get("q") || "";
+	const docFilter = (searchParams.get("filter") as DocFilter) || "all";
+
+	const updateParams = useCallback((updates: { q?: string; filter?: DocFilter }) => {
+		const params = new URLSearchParams(searchParams.toString());
+
+		if (updates.q !== undefined) {
+			if (updates.q) {
+				params.set("q", updates.q);
+			} else {
+				params.delete("q");
+			}
+		}
+
+		if (updates.filter !== undefined) {
+			if (updates.filter && updates.filter !== "all") {
+				params.set("filter", updates.filter);
+			} else {
+				params.delete("filter");
+			}
+		}
+
+		const queryString = params.toString();
+		router.replace(queryString ? `${pathname}?${queryString}` : pathname);
+	}, [router, pathname, searchParams]);
 
 	const totalVars = ENV_VAR_CATEGORIES.reduce((sum, cat) => sum + cat.vars.length, 0);
 	const documentedVars = ENV_VAR_CATEGORIES.reduce(
@@ -104,7 +132,7 @@ export default function EnvPage() {
 	);
 
 	const toggleFilter = (filter: DocFilter) => {
-		setDocFilter(docFilter === filter ? "all" : filter);
+		updateParams({ filter: docFilter === filter ? "all" : filter });
 	};
 
 	return (
@@ -160,7 +188,7 @@ export default function EnvPage() {
 					<TextField.Root
 						placeholder="Search environment variables..."
 						value={searchQuery}
-						onChange={(e) => setSearchQuery(e.target.value)}
+						onChange={(e) => updateParams({ q: e.target.value })}
 						size="2"
 					>
 						<TextField.Slot>
@@ -197,5 +225,13 @@ export default function EnvPage() {
 				</Flex>
 			</Container>
 		</ScrollArea>
+	);
+}
+
+export default function EnvPage() {
+	return (
+		<Suspense fallback={<Box p="6"><Text color="gray">Loading...</Text></Box>}>
+			<EnvPageContent />
+		</Suspense>
 	);
 }
