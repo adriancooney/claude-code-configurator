@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import {
 	Badge,
@@ -48,16 +48,30 @@ function formatValueType(valueType: EnvVarValueType | undefined): string | null 
 
 type DocFilter = "all" | "documented" | "undocumented";
 
-function EnvVarRow({ envVar, isLast }: { envVar: EnvVar; isLast: boolean }) {
+function EnvVarRow({ envVar, isLast, isHighlighted }: { envVar: EnvVar; isLast: boolean; isHighlighted: boolean }) {
 	const valueTypeStr = formatValueType(envVar.valueType);
 	return (
 		<Box
+			id={envVar.name}
 			py="2"
-			style={isLast ? { paddingBottom: 0 } : { borderBottom: "1px solid var(--gray-4)" }}
+			style={{
+				...(isLast ? { paddingBottom: 0 } : { borderBottom: "1px solid var(--gray-4)" }),
+				...(isHighlighted ? {
+					background: "var(--yellow-3)",
+					margin: "0 calc(var(--space-3) * -1)",
+					padding: "var(--space-2) var(--space-3)",
+					borderRadius: "var(--radius-2)",
+				} : {}),
+			}}
 		>
 			<Flex gap="2" align="center" mb="1">
 				<Text size="2" weight="medium" style={{ fontFamily: "monospace" }}>
-					{envVar.name}
+					<a
+						href={`#${envVar.name}`}
+						style={{ color: "inherit", textDecoration: "none" }}
+					>
+						{envVar.name}
+					</a>
 					{valueTypeStr && <span style={{ color: "var(--gray-9)", fontWeight: 400 }}>=&lt;{valueTypeStr}&gt;</span>}
 				</Text>
 				{envVar.documented ? (
@@ -82,7 +96,7 @@ function EnvVarRow({ envVar, isLast }: { envVar: EnvVar; isLast: boolean }) {
 	);
 }
 
-function CategoryCard({ category, searchQuery, docFilter }: { category: typeof ENV_VAR_CATEGORIES[0]; searchQuery: string; docFilter: DocFilter }) {
+function CategoryCard({ category, searchQuery, docFilter, highlightedVar }: { category: typeof ENV_VAR_CATEGORIES[0]; searchQuery: string; docFilter: DocFilter; highlightedVar: string | null }) {
 	const filteredVars = category.vars.filter((v) => {
 		const matchesSearch =
 			v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -104,7 +118,7 @@ function CategoryCard({ category, searchQuery, docFilter }: { category: typeof E
 			</Text>
 			<Box mt="2">
 				{filteredVars.map((envVar, index) => (
-					<EnvVarRow key={envVar.name} envVar={envVar} isLast={index === filteredVars.length - 1} />
+					<EnvVarRow key={envVar.name} envVar={envVar} isLast={index === filteredVars.length - 1} isHighlighted={highlightedVar === envVar.name} />
 				))}
 			</Box>
 		</Card>
@@ -115,9 +129,29 @@ function EnvPageContent() {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
+	const [highlightedVar, setHighlightedVar] = useState<string | null>(null);
 
 	const searchQuery = searchParams.get("q") || "";
 	const docFilter = (searchParams.get("filter") as DocFilter) || "all";
+
+	useEffect(() => {
+		const handleHashChange = () => {
+			const hash = window.location.hash.slice(1);
+			if (hash) {
+				setHighlightedVar(hash);
+				const element = document.getElementById(hash);
+				if (element) {
+					element.scrollIntoView({ behavior: "smooth", block: "center" });
+				}
+			} else {
+				setHighlightedVar(null);
+			}
+		};
+
+		handleHashChange();
+		window.addEventListener("hashchange", handleHashChange);
+		return () => window.removeEventListener("hashchange", handleHashChange);
+	}, []);
 
 	const updateParams = useCallback((updates: { q?: string; filter?: DocFilter }) => {
 		const params = new URLSearchParams(searchParams.toString());
@@ -241,6 +275,7 @@ function EnvPageContent() {
 									category={category}
 									searchQuery={searchQuery}
 									docFilter={docFilter}
+									highlightedVar={highlightedVar}
 								/>
 							))
 						)}
