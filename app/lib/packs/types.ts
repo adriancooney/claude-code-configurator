@@ -2,6 +2,7 @@ export interface ToolPack {
 	id: string;
 	name: string;
 	description: string;
+	url?: string;
 	readOnly: string[];
 	readWrite: string[];
 }

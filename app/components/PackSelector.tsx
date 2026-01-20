@@ -109,7 +109,13 @@ export function PackSelector({ rules, onChange }: PackSelectorProps) {
 					return (
 						<Flex key={pack.id} justify="between" align="center">
 							<Flex direction="column" gap="0">
-								<Text size="2" weight="medium">{pack.name}</Text>
+								<Text size="2" weight="medium">
+									{pack.url ? (
+										<a href={pack.url} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "underline" }}>
+											{pack.name}
+										</a>
+									) : pack.name}
+								</Text>
 								<Text size="1" color="gray">{pack.description}</Text>
 							</Flex>
 							<Flex gap="4" align="center" px="2" py="1">
