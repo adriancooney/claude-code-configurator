@@ -407,6 +407,25 @@ export const TOOL_PACKS: ToolPack[] = [
 		],
 	},
 	{
+		id: "changesets",
+		name: "Changesets",
+		description: "Versioning and changelog management for monorepos",
+		url: "https://github.com/changesets/changesets",
+		readOnly: [
+			"Bash(changeset status:*)",
+			"Bash(changeset list:*)",
+			"Bash(npx changeset status:*)",
+			"Bash(npx changeset list:*)",
+			"Bash(pnpm changeset status:*)",
+			"Bash(pnpm changeset list:*)",
+		],
+		readWrite: [
+			"Bash(changeset:*)",
+			"Bash(npx changeset:*)",
+			"Bash(pnpm changeset:*)",
+		],
+	},
+	{
 		id: "beads",
 		name: "Beads",
 		description: "Git-backed graph issue tracker for AI agents",
