@@ -410,6 +410,7 @@ export const TOOL_PACKS: ToolPack[] = [
 		id: "beads",
 		name: "Beads",
 		description: "Git-backed graph issue tracker for AI agents",
+		url: "https://github.com/steveyegge/beads",
 		readOnly: [
 			"Bash(bd ready:*)",
 			"Bash(bd show:*)",
