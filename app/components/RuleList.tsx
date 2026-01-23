@@ -46,6 +46,14 @@ function validateRule(rule: string): { valid: boolean; error?: string } {
 	return { valid: true };
 }
 
+interface FileOptions {
+	read?: boolean;
+	edit?: boolean;
+	write?: boolean;
+	glob?: boolean;
+	grep?: boolean;
+}
+
 interface QuickAction {
 	id: string;
 	label: string;
@@ -54,7 +62,7 @@ interface QuickAction {
 	description?: string;
 	helpContent?: React.ReactNode;
 	hasFileOptions?: boolean;
-	generate: (input: string, options?: { read?: boolean; edit?: boolean }) => string[];
+	generate: (input: string, options?: FileOptions) => string[];
 }
 
 interface RuleListProps {
@@ -200,19 +208,25 @@ function QuickActionButton({
 	const [open, setOpen] = useState(false);
 	const [readChecked, setReadChecked] = useState(true);
 	const [editChecked, setEditChecked] = useState(true);
+	const [writeChecked, setWriteChecked] = useState(true);
+	const [globChecked, setGlobChecked] = useState(true);
+	const [grepChecked, setGrepChecked] = useState(true);
 
 	const handleApply = () => {
 		if (input.trim()) {
-			const options = action.hasFileOptions ? { read: readChecked, edit: editChecked } : undefined;
+			const options = action.hasFileOptions ? { read: readChecked, edit: editChecked, write: writeChecked, glob: globChecked, grep: grepChecked } : undefined;
 			onAdd(action.generate(input.trim(), options));
 			setInput("");
 			setReadChecked(true);
 			setEditChecked(true);
+			setWriteChecked(true);
+			setGlobChecked(true);
+			setGrepChecked(true);
 			setOpen(false);
 		}
 	};
 
-	const options = action.hasFileOptions ? { read: readChecked, edit: editChecked } : undefined;
+	const options = action.hasFileOptions ? { read: readChecked, edit: editChecked, write: writeChecked, glob: globChecked, grep: grepChecked } : undefined;
 	const hasInput = !!input.trim();
 	const preview = hasInput ? action.generate(input.trim(), options) : action.generate(action.placeholder, options);
 
@@ -244,7 +258,7 @@ function QuickActionButton({
 						)}
 					</Box>
 					{action.hasFileOptions && (
-						<Flex gap="4">
+						<Flex gap="4" wrap="wrap">
 							<Text as="label" size="2">
 								<Flex gap="2" align="center">
 									<Checkbox checked={readChecked} onCheckedChange={(c) => setReadChecked(c === true)} />
@@ -255,6 +269,24 @@ function QuickActionButton({
 								<Flex gap="2" align="center">
 									<Checkbox checked={editChecked} onCheckedChange={(c) => setEditChecked(c === true)} />
 									Edit
+								</Flex>
+							</Text>
+							<Text as="label" size="2">
+								<Flex gap="2" align="center">
+									<Checkbox checked={writeChecked} onCheckedChange={(c) => setWriteChecked(c === true)} />
+									Write
+								</Flex>
+							</Text>
+							<Text as="label" size="2">
+								<Flex gap="2" align="center">
+									<Checkbox checked={globChecked} onCheckedChange={(c) => setGlobChecked(c === true)} />
+									Glob
+								</Flex>
+							</Text>
+							<Text as="label" size="2">
+								<Flex gap="2" align="center">
+									<Checkbox checked={grepChecked} onCheckedChange={(c) => setGrepChecked(c === true)} />
+									Grep
 								</Flex>
 							</Text>
 						</Flex>
@@ -340,7 +372,7 @@ export const ALLOW_QUICK_ACTIONS: QuickAction[] = [
 	},
 	{
 		id: "files",
-		label: "Allow files",
+		label: "Allow files and directories",
 		icon: <FileIcon />,
 		placeholder: "src/**/*.ts",
 		hasFileOptions: true,
@@ -348,6 +380,9 @@ export const ALLOW_QUICK_ACTIONS: QuickAction[] = [
 			const rules: string[] = [];
 			if (options?.read !== false) rules.push(`Read(${pattern})`);
 			if (options?.edit !== false) rules.push(`Edit(${pattern})`);
+			if (options?.write !== false) rules.push(`Write(${pattern})`);
+			if (options?.glob !== false) rules.push(`Glob(${pattern})`);
+			if (options?.grep !== false) rules.push(`Grep(${pattern})`);
 			return rules;
 		},
 	},
@@ -365,6 +400,9 @@ export const DENY_QUICK_ACTIONS: QuickAction[] = [
 			const rules: string[] = [];
 			if (options?.read !== false) rules.push(`Read(${pattern})`);
 			if (options?.edit !== false) rules.push(`Edit(${pattern})`);
+			if (options?.write !== false) rules.push(`Write(${pattern})`);
+			if (options?.glob !== false) rules.push(`Glob(${pattern})`);
+			if (options?.grep !== false) rules.push(`Grep(${pattern})`);
 			return rules;
 		},
 	},

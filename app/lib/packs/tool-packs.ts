@@ -4,11 +4,8 @@ export const TOOL_PACKS: ToolPack[] = [
 	{
 		id: "filesystem",
 		name: "Filesystem",
-		description: "Read, Edit, Write, Glob, Grep, ls, find, cat, mkdir, rm, cp, mv",
+		description: "ls, find, cat, mkdir, rm, cp, mv (use Allow Files button for Read/Edit/Write)",
 		readOnly: [
-			"Read",
-			"Glob",
-			"Grep",
 			"Bash(ls:*)",
 			"Bash(find:*)",
 			"Bash(cat:*)",
@@ -27,11 +24,6 @@ export const TOOL_PACKS: ToolPack[] = [
 			"Bash(basename:*)",
 		],
 		readWrite: [
-			"Read",
-			"Glob",
-			"Grep",
-			"Edit",
-			"Write",
 			"Bash(ls:*)",
 			"Bash(find:*)",
 			"Bash(cat:*)",

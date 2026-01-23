@@ -1,6 +1,7 @@
 "use client";
 
-import { Box, Checkbox, Flex, Text } from "@radix-ui/themes";
+import { Box, Checkbox, Flex, Text, Tooltip } from "@radix-ui/themes";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { TOOL_PACKS, getPackState, togglePack } from "../lib/packs";
 
 interface PackSelectorProps {
@@ -109,13 +110,20 @@ export function PackSelector({ rules, onChange }: PackSelectorProps) {
 					return (
 						<Flex key={pack.id} justify="between" align="center">
 							<Flex direction="column" gap="0">
-								<Text size="2" weight="medium">
-									{pack.url ? (
-										<a href={pack.url} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "underline" }}>
-											{pack.name}
-										</a>
-									) : pack.name}
-								</Text>
+								<Flex gap="1" align="center">
+									<Text size="2" weight="medium">
+										{pack.url ? (
+											<a href={pack.url} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "underline" }}>
+												{pack.name}
+											</a>
+										) : pack.name}
+									</Text>
+									{pack.id === "filesystem" && (
+										<Tooltip content="To enable Read, Edit, Write, Glob, or Grep for specific directories, use the 'Allow files and directories' button in the Allow Rules section above.">
+											<InfoCircledIcon style={{ color: "var(--gray-9)", cursor: "help" }} />
+										</Tooltip>
+									)}
+								</Flex>
 								<Text size="1" color="gray">{pack.description}</Text>
 							</Flex>
 							<Flex gap="4" align="center" px="2" py="1">

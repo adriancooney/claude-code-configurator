@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex, Select, Text } from "@radix-ui/themes";
+import { Box, Flex, Select, Switch, Text } from "@radix-ui/themes";
 import type { Permissions, PermissionMode } from "../lib/schema";
 import { PERMISSION_MODES } from "../lib/schema";
 import { getPackRules } from "../lib/packs";
@@ -57,6 +57,31 @@ export function PermissionsSection({ permissions, onChange }: PermissionsSection
 						))}
 					</Select.Content>
 				</Select.Root>
+			</Box>
+
+			<Box
+				style={{
+					background: "var(--violet-a3)",
+					borderRadius: "var(--radius-3)",
+					padding: "var(--space-3)",
+				}}
+			>
+				<Flex justify="between" align="center">
+					<Flex direction="column" gap="1">
+						<Text size="2" weight="medium">
+							Allow edits in current directory
+						</Text>
+						<Text size="1" color="gray">
+							Automatically accept file edits without prompting.
+						</Text>
+					</Flex>
+					<Switch
+						checked={permissions.defaultMode === "acceptEdits"}
+						onCheckedChange={(checked) =>
+							onChange({ ...permissions, defaultMode: checked ? "acceptEdits" : "default" })
+						}
+					/>
+				</Flex>
 			</Box>
 
 			<RuleList
