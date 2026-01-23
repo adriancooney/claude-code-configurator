@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useRef, useEffect, useCallback, type ReactNode } from "react";
+import pako from "pako";
 import { DEFAULT_SETTINGS, type ClaudeCodeSettings } from "./schema";
 
 const STORAGE_KEY = "claude-code-configurator-settings";
@@ -8,15 +9,27 @@ const MAX_HISTORY = 50;
 
 function encodeSettings(settings: ClaudeCodeSettings): string {
 	const json = JSON.stringify(settings);
-	return btoa(encodeURIComponent(json));
+	const compressed = pako.deflate(json);
+	const binary = String.fromCharCode(...compressed);
+	return btoa(binary);
 }
 
 function decodeSettings(encoded: string): ClaudeCodeSettings | null {
 	try {
-		const json = decodeURIComponent(atob(encoded));
+		const binary = atob(encoded);
+		const bytes = new Uint8Array(binary.length);
+		for (let i = 0; i < binary.length; i++) {
+			bytes[i] = binary.charCodeAt(i);
+		}
+		const json = pako.inflate(bytes, { to: "string" });
 		return JSON.parse(json);
 	} catch {
-		return null;
+		try {
+			const json = decodeURIComponent(atob(encoded));
+			return JSON.parse(json);
+		} catch {
+			return null;
+		}
 	}
 }
 

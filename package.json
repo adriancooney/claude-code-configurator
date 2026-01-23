@@ -16,12 +16,14 @@
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "next": "16.1.1",
+    "pako": "^2.1.0",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
     "@types/node": "^20",
+    "@types/pako": "^2.0.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
