@@ -54,7 +54,7 @@ export const TOOL_PACKS: ToolPack[] = [
 	{
 		id: "nodejs",
 		name: "Node.js",
-		description: "npm, pnpm, yarn, TypeScript, jest, vitest, fnm, nvm, shadcn",
+		description: "npm, pnpm, yarn, bun, TypeScript, jest, vitest, fnm, nvm, shadcn",
 		readOnly: [
 			"Bash(node --version:*)",
 			"Bash(npm list:*)",
@@ -69,6 +69,8 @@ export const TOOL_PACKS: ToolPack[] = [
 			"Bash(yarn info:*)",
 			"Bash(yarn outdated:*)",
 			"Bash(yarn audit:*)",
+			"Bash(bun --version:*)",
+			"Bash(bun pm ls:*)",
 			"Bash(tsc --version:*)",
 			"Bash(tsc --showConfig:*)",
 			"Bash(tsc --listFiles:*)",
@@ -90,6 +92,8 @@ export const TOOL_PACKS: ToolPack[] = [
 			"Bash(npm:*)",
 			"Bash(pnpm:*)",
 			"Bash(yarn:*)",
+			"Bash(bun:*)",
+			"Bash(bunx:*)",
 			"Bash(tsc:*)",
 			"Bash(jest:*)",
 			"Bash(vitest:*)",
@@ -105,6 +109,11 @@ export const TOOL_PACKS: ToolPack[] = [
 			"Bash(pnpm dlx vitest:*)",
 			"Bash(pnpm dlx shadcn:*)",
 			"Bash(pnpm dlx shadcn@latest:*)",
+			"Bash(bunx tsc:*)",
+			"Bash(bunx jest:*)",
+			"Bash(bunx vitest:*)",
+			"Bash(bunx shadcn:*)",
+			"Bash(bunx shadcn@latest:*)",
 		],
 	},
 	{
