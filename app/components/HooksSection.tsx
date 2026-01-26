@@ -214,19 +214,6 @@ export function HooksSection({ settings, onChange }: HooksSectionProps) {
         />
       </Flex>
 
-      <Box
-        style={{
-          background: "var(--violet-a3)",
-          borderRadius: "var(--radius-3)",
-          padding: "var(--space-4)",
-        }}
-      >
-        <HookPackSelector
-          hooks={hooks}
-          onChange={(newHooks) => updateHooks(newHooks)}
-        />
-      </Box>
-
       <Box>
         <Text
           as="label"
@@ -275,6 +262,19 @@ export function HooksSection({ settings, onChange }: HooksSectionProps) {
           Add {HOOK_TYPES.find((t) => t.value === selectedType)?.label} Hook
         </Button>
       </Flex>
+
+      <Box
+        style={{
+          background: "var(--violet-a3)",
+          borderRadius: "var(--radius-3)",
+          padding: "var(--space-4)",
+        }}
+      >
+        <HookPackSelector
+          hooks={hooks}
+          onChange={(newHooks) => updateHooks(newHooks)}
+        />
+      </Box>
     </Flex>
   );
 }

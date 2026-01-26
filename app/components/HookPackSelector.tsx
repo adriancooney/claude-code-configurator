@@ -77,6 +77,16 @@ export function HookPackSelector({ hooks, onChange }: HookPackSelectorProps) {
     onChange(toggleHookPack(pack, checked, hooks));
   };
 
+  const allEnabled = HOOK_PACKS.every((pack) => isHookPackEnabled(pack, hooks));
+
+  const handleSelectAll = (checked: boolean) => {
+    let newHooks = { ...hooks };
+    for (const pack of HOOK_PACKS) {
+      newHooks = toggleHookPack(pack, checked, newHooks);
+    }
+    onChange(newHooks);
+  };
+
   return (
     <Box>
       <Flex
@@ -102,11 +112,10 @@ export function HookPackSelector({ hooks, onChange }: HookPackSelectorProps) {
           </Text>
         </Box>
         <Flex gap="4" align="center" px="2" py="1">
-          <Text as="label" size="2">
-            <Flex gap="2" align="center">
-              Enabled
-            </Flex>
-          </Text>
+          <Checkbox
+            checked={allEnabled}
+            onCheckedChange={(c) => handleSelectAll(c === true)}
+          />
         </Flex>
       </Flex>
       <Flex direction="column" gap="3">
