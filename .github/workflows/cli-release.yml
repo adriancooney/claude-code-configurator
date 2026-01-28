@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -41,12 +43,34 @@ jobs:
         working-directory: cli
         run: pnpm test
 
-      - name: Create Release Pull Request or Publish
+      - name: Setup git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Check for changesets
         id: changesets
-        uses: changesets/action@v1
-        with:
-          cwd: ${{ github.workspace }}/cli
-          publish: pnpm release
+        working-directory: cli
+        run: |
+          if pnpm changeset status --since=origin/main 2>&1 | grep -q "No changesets present"; then
+            echo "has_changesets=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changesets=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Version PR or Publish
+        working-directory: cli
+        run: |
+          if [ "${{ steps.changesets.outputs.has_changesets }}" = "true" ]; then
+            echo "Changesets found, running version..."
+            pnpm changeset version
+            git add -A
+            git commit -m "Version Packages" || echo "No changes to commit"
+            git push
+          else
+            echo "No changesets, checking if we need to publish..."
+            pnpm release || echo "Nothing to publish"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
