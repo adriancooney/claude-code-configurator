@@ -55,10 +55,11 @@ jobs:
         id: changesets
         working-directory: cli
         run: |
-          if pnpm changeset status --since=origin/main 2>&1 | grep -q "No changesets present"; then
-            echo "has_changesets=false" >> $GITHUB_OUTPUT
-          else
+          # Check if there are any changeset files (excluding README)
+          if ls .changeset/*.md 2>/dev/null | grep -v README.md | grep -q .; then
             echo "has_changesets=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changesets=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Version and Publish
