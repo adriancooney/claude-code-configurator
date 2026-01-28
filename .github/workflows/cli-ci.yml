@@ -14,9 +14,6 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: cli
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,13 +29,17 @@ jobs:
           cache-dependency-path: cli/pnpm-lock.yaml
 
       - name: Install dependencies
+        working-directory: cli
         run: pnpm install
 
       - name: Build
+        working-directory: cli
         run: pnpm build
 
       - name: Run tests with coverage
+        working-directory: cli
         run: pnpm test:coverage
 
       - name: Type check
+        working-directory: cli
         run: pnpm tsc --noEmit

@@ -14,9 +14,6 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: cli
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,22 +27,27 @@ jobs:
           node-version: 20
           cache: 'pnpm'
           cache-dependency-path: cli/pnpm-lock.yaml
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
+        working-directory: cli
         run: pnpm install
 
       - name: Build
+        working-directory: cli
         run: pnpm build
 
       - name: Run tests
+        working-directory: cli
         run: pnpm test
 
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm release
           cwd: cli
+          publish: pnpm release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
