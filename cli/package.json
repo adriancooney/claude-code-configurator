@@ -1,6 +1,6 @@
 {
   "name": "configure-claude-code",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "CLI to detect and install tools referenced in Claude Code settings",
   "type": "module",
   "bin": {
