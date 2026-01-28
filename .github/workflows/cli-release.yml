@@ -61,7 +61,7 @@ jobs:
             echo "has_changesets=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Create Version PR or Publish
+      - name: Version and Publish
         working-directory: cli
         run: |
           if [ "${{ steps.changesets.outputs.has_changesets }}" = "true" ]; then
@@ -70,6 +70,8 @@ jobs:
             git add -A
             git commit -m "Version Packages" || echo "No changes to commit"
             git push
+            echo "Publishing to npm..."
+            pnpm release
           else
             echo "No changesets, checking if we need to publish..."
             pnpm release || echo "Nothing to publish"
